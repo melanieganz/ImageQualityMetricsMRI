@@ -1,3 +1,1 @@
-.idea/
-configs/
-!configs/config_debug.yaml
+.idea/*
