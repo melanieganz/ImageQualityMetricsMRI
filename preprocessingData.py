@@ -114,8 +114,10 @@ for subject_folder in subject_folders:
                 
                 flirt_output = os.path.join(flirt_output_dir, f"align_{seq}_mask.nii.gz")
                 flirt_command = ["flirt", "-in", mprage_bet_mask, "-ref", ref_image, "-out", flirt_output,'-dof','6']
+                fslmath_command = ["fslmaths", flirt_output, "-bin", flirt_output]
                 
                 subprocess.run(flirt_command, check=True)
+                subprocess.run(fslmath_command, check=True)
                 print(f"FLIRT mask completed for {subject_folder} ({seq})")
     
                 # Register non-reference images of other sequences to their corresponding references        
