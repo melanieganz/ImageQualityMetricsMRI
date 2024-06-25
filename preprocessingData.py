@@ -37,7 +37,9 @@ def find_reference_images(directory, seq):
     # or
     # brew install git-annex (Mac)
 # ------------------------------------------------------------------------------------------------------
-
+# This code requires FSL. 
+    # https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation
+# ------------------------------------------------------------------------------------------------------
 
 # URL of the Git repository to clone
 repo_url = "https://github.com/OpenNeuroDatasets/ds004332.git"
@@ -87,7 +89,7 @@ for subject_folder in subject_folders:
                 # For MPRAGE sequence, run BET if it is the reference
                 mprage_bet = os.path.join(sequence_output_dir, "bet_mprage")
                 
-                bet_command = ['bet', ref_image, mprage_bet, '-R', '-f', '0.4', '-t', '-m']
+                bet_command = ['bet', ref_image, mprage_bet, '-R', '-f', '0.4', '-m']
                 subprocess.run(bet_command, check=True)
                 print(f"BET completed for {subject_folder} ({seq})")
                 
