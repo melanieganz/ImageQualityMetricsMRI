@@ -90,6 +90,7 @@ dependencies:
     - patool==2.2.0
     - phasepack==1.5
     - pillow==10.3.0
+    - piq==0.8.0
     - platformdirs==4.2.2
     - pluggy==1.5.0
     - pycparser==2.22

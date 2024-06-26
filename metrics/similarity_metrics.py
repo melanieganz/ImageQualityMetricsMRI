@@ -1,8 +1,8 @@
 import numpy as np
-from image_similarity_measures.quality_metrics import fsim
+import image_similarity_measures as img_sim
 
 
-def calc_fsim(img, img_ref):
+def fsim(img, img_ref):
     """Calculate FSIM between two 3D images slice-wise.
 
     Notes:
@@ -12,7 +12,9 @@ def calc_fsim(img, img_ref):
         
     fsims = []
     for i in range(len(img)):
-        fsims.append(fsim(org_img=img_ref[i][:,  :, None],
-                          pred_img=img[i][:,  :, None]))
+        fsims.append(img_sim.quality_metrics.fsim(
+            org_img=img_ref[i][:,  :, None],
+            pred_img=img[i][:,  :, None])
+        )
 
     return np.mean(fsims)
