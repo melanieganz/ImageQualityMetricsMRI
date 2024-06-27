@@ -10,7 +10,7 @@ Maxim Zaitsev, Karl Young, Gerald Matson, and Norbert Schuff '''
 import numpy as np
 from skimage.feature import canny
 from scipy.ndimage import convolve
-from utils import crop_img, bin_img
+from data_utils import crop_img, bin_img
 
 
 def aes(img, brainmask = None, sigma=np.sqrt(2), n_levels = 128, bin = False, crop = True, weigt_avg = False):
