@@ -1,5 +1,6 @@
 '''
 Simon Chemnitz-Thomsen's code to calculate the metric Average Edge Strength. 
+Modified by Elisa Marchetto to remove zeros from the masking process from the image 
 
 
 Code is based on the article:
@@ -13,7 +14,7 @@ from scipy.ndimage import convolve
 from data_utils import crop_img, bin_img
 
 
-def aes(img, brainmask = None, sigma=np.sqrt(2), n_levels = 128, bin = False, crop = True, weigt_avg = False):
+def aes(img, brainmask = False, sigma=np.sqrt(2), n_levels = 128, bin = False, crop = True, weigt_avg = False):
     '''
     Parameters
     ----------
@@ -65,6 +66,9 @@ def aes(img, brainmask = None, sigma=np.sqrt(2), n_levels = 128, bin = False, cr
     for slice in range(vol_shape[2]):
         #Slice to do operations on
         im_slice = img[:,:,slice]
+        
+        if brainmask is True:
+            im_slice = im_slice>0
 
         #Weight, proportion of non zero pixels
         weights.append(np.mean(im_slice>0))
@@ -72,8 +76,10 @@ def aes(img, brainmask = None, sigma=np.sqrt(2), n_levels = 128, bin = False, cr
         #Convolve slice
         x_conv = convolve(im_slice, x_kern)
         y_conv = convolve(im_slice, y_kern)
+        
         #Canny edge detector
         canny_img = canny(im_slice, sigma = sigma)
+        
         #Numerator and denominator, to be divided
         #defining the edge strength of the slice
         numerator = np.sum(canny_img*( x_conv**2 + y_conv**2 ))

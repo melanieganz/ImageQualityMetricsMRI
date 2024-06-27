@@ -64,7 +64,12 @@ for subject_folder in subject_folders:
                     
                     res_imq = {'Sbj':subject_folder,
                                 'File': filename, 
-                                'AES':imq[0]
+                                'AES':imq[0],
+                                'Tenengrad':imq[1],
+                                'NGS':imq[2],
+                                'Gradient Entropy':imq[3],
+                                'Entropy':imq[4],
+                                'CoEnt':imq[5]
                                 }      
                     results_list.append(res_imq)
                     

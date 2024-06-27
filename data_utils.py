@@ -14,6 +14,21 @@ def load_data(subject_folder, acq, rec, run):
 
     return nib.load(filename).get_fdata().astype(np.uint16)
 
+def min_max_scale(img):
+    """ Rescale image between [0,1] using the min/max method """
+    min_val = np.min(img)
+    max_val = np.max(img)
+    img_scale = (img - min_val) / (max_val - min_val)
+    return img_scale
+
+
+def normalize(img):
+    """ Rescale image between [0,1] using the min/max method """
+    mean_img = np.mean(img)
+    std_img = np.std(img)
+    img_norm = (img-mean_img)/std_img
+    return img_norm
+
 def crop_img(img):
     '''
     Parameters

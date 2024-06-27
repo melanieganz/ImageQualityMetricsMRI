@@ -22,7 +22,7 @@ def calc_gradient_magnitude(img):
     return np.sqrt(grad_x ** 2 + grad_y ** 2 + grad_z ** 2)
 
 
-def tenengrad(img, brainmask=None):
+def tenengrad(img, brainmask=False):
     """Tenengrad measure of the input image.
 
     The code is based on the article:
@@ -32,10 +32,10 @@ def tenengrad(img, brainmask=None):
     ----------
     img : numpy array
         image for which the metrics should be calculated.
-    brainmask : numpy array or list, optional
-        If a non-empty numpy array is given, this brainmask will be used to
-        mask the images before calculating the metrics. If an empty list is
-        given, no mask is applied. The default is [].
+    brainmask : boolean True or False, optional
+        If True, a brainmask was used to mask the images before 
+        calculating the metrics. Image is flattened prior metric 
+        estimation. The default is False.
 
     Returns
     -------
@@ -46,14 +46,14 @@ def tenengrad(img, brainmask=None):
     grad = calc_gradient_magnitude(img)
 
     # apply flattened brainmask:
-    if brainmask is not None:
+    if brainmask is True:
         grad = grad.flatten()
         grad = grad[grad > 0]
 
     return np.mean(grad ** 2)
 
 
-def gradient_entropy(img, brainmask=None):
+def gradient_entropy(img, brainmask=False):
     """Gradient Entropy of the input image.
 
     The code is based on the article:
@@ -65,10 +65,10 @@ def gradient_entropy(img, brainmask=None):
     ----------
     img : numpy array
         image for which the metrics should be calculated.
-    brainmask : numpy array or list, optional
-        If not None, this brainmask will be used to mask the images before
-        calculating the metrics. Otherwise, no mask is applied. The default
-        is None.
+    brainmask : boolean True or False, optional
+        If True, a brainmask was used to mask the images before 
+        calculating the metrics. Image is flattened prior metric 
+        estimation. The default is False.
 
     Returns
     -------
@@ -79,7 +79,7 @@ def gradient_entropy(img, brainmask=None):
     grad = calc_gradient_magnitude(img)  # maybe needs to be normalized
 
     # apply flattened brainmask:
-    if brainmask is not None:
+    if brainmask is True:
         grad = grad.flatten()
         grad = grad[grad > 0]
 
@@ -89,7 +89,7 @@ def gradient_entropy(img, brainmask=None):
     return ge
 
 
-def normalized_gradient_squared(img, brainmask=None):
+def normalized_gradient_squared(img, brainmask=False):
     """Normalized gradient squared measure of the input image.
 
     The code is based on the article:
@@ -101,10 +101,10 @@ def normalized_gradient_squared(img, brainmask=None):
     ----------
     img : numpy array
         image for which the metrics should be calculated.
-    brainmask : numpy array or list, optional
-        If a non-empty numpy array is given, this brainmask will be used to
-        mask the images before calculating the metric. If None, no mask is
-        applied. The default is None.
+    brainmask : boolean True or False, optional
+        If True, a brainmask was used to mask the images before 
+        calculating the metrics. Image is flattened prior metric 
+        estimation. The default is False.
 
     Returns
     -------
@@ -115,8 +115,9 @@ def normalized_gradient_squared(img, brainmask=None):
     grad = calc_gradient_magnitude(img)
 
     # apply brainmask:
-    if brainmask is not None:
+    if brainmask is True:
         grad = grad.flatten()
         grad = grad[grad > 0]
 
-    return np.mean((grad/np.sum(grad))**2)
+    #FIXME: added a scaling factor here otherwise the value is too small, not sure if it is a good idea? 
+    return np.sum((grad / np.sum(grad)) ** 2) * len(grad)

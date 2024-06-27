@@ -12,9 +12,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+from data_utils import *
 from metrics.AES import aes
 from metrics.fsim import calc_fsim
 from metrics.gradient_metrics import *
+from metrics.ImageEntropy import imageEntropy
+from metrics.CoEnt import *
 from metrics.perceptual_metric import perceptual_metric
 
 
@@ -50,20 +53,15 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
 
     '''
     
-    # metrics_dict = {
-    #     "full_reference": {
-    #         "FSIM": calc_fsim,
-    #         "PerceptualMetric": perceptual_metric},
-    #     "reference_free": {
-    #         "AES": aes,
-    #         "Tenengrad": tenengrad,
-    #         "NGS": normalized_gradient_squared,
-    #         "GradientEntropy": gradient_entropy}
-    # }
-    
     metrics_dict = {
         "reference_free": {
-            "AES": aes}
+            "AES": aes,
+            "Tenengrad": tenengrad,
+            "NGS": normalized_gradient_squared,
+            "GradientEntropy": gradient_entropy, 
+            "Entropy": imageEntropy,
+            "CoEnt": coent
+            }
     }
     
     img = nib.load(filename).get_fdata().astype(np.uint16)
@@ -78,28 +76,24 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
     
     res = []
     
-    for m in metrics_dict["reference_free"]:        
-        if m in metrics_dict["reference_free"]:
-            if brainmask_file != False:
-                img_masked = np.multiply(img, brainmask)
-            else:
-                img_masked = img
-                            
-            if normal == True:
-                mean_img = np.mean(img_masked)
-                std_img = np.std(img_masked)
-                img_final = (img_masked-mean_img)/std_img
-            else:
-                img_final = img_masked
-                
-            metric_value = metrics_dict['reference_free'][m](img_final)
-            print(f"{m}: {metric_value}")
-            
-            res = np.append(res,metric_value)
-
+    for m in metrics_dict["reference_free"]:
+        if brainmask_file != False:
+            img_masked = np.multiply(img, brainmask)
+            mask = True
         else:
-            raise NotImplementedError("Metric {} not implemented.".format(m))
+            img_masked = img
+            mask = False
+                        
+        if normal == True and m != "CoEnt":
+            img_final = min_max_scale(img_masked)
+            metric_value = metrics_dict['reference_free'][m](img_final, mask)
+        else:
+            img_final = img_masked
+            metric_value = metrics_dict['reference_free'][m](img_final)
+            
+        print(f"{m}: {metric_value}")
+        
+        res = np.append(res,metric_value)
 
-    
     return res
 
