@@ -3,8 +3,10 @@ import nibabel as nib
 import numpy as np
 import pandas as pd
 
+import subprocess
 from os import listdir
 from os.path import join
+
 from Image_quality_metrics import Compute_Metric
 
 data_dir = "OpenNeuro_dataset"
@@ -31,20 +33,26 @@ for subject_folder in subject_folders:
         seq_folder = os.path.join(data_dir, subject_folder, seq)
         
         # Find reference for that sequence (if available)
-        ref_image = find_reference_images(seq_folder, seq)
+        ref_folder = os.path.join(data_dir, subject_folder, "anat")
+        ref_temp = find_reference_images(ref_folder, seq)        
         
-        if ref_image:
-            print(f"Found reference image for {subject_folder} ({seq}): {ref_image}")
+        if ref_temp:
+            print(f"Found reference image for {subject_folder} ({seq}): {ref_temp}")
+            
+            # Command to copy file using copy command on Windows
+            ref_image = os.path.join(seq_folder, f"ref_{seq}_image.nii")
+            command = ['cp', '-f', ref_temp, ref_image]
+            subprocess.run(command, check=True, shell=False)
 
             # For each file (reference incuded):
             for filename in os.listdir(seq_folder):
-                if seq in filename.lower() and filename.endswith(".nii"):
+                if seq in filename.lower() and filename.endswith(".nii") or filename.endswith(".gz"):
                     
                     # Get the mask file
                     if seq =="mprage":
-                        seq_bet_mask = os.path.join(seq_folder, "bet_{seq}_mask.nii.gz")
+                        seq_bet_mask = os.path.join(seq_folder, f"bet_{seq}_mask.nii.gz")
                     else:
-                        seq_bet_mask = os.path.join(seq_folder, "align_{seq}_mask.nii.gz")
+                        seq_bet_mask = os.path.join(seq_folder, f"align_{seq}_mask.nii.gz")
             
                     input_image = os.path.join(seq_folder, filename)
                     print(f"Input image is {input_image}")   
@@ -52,19 +60,15 @@ for subject_folder in subject_folders:
                     print(f"Reference is {ref_image}")       
                     
                     # run metric calculation
-                    imq = Compute_Metric(filename, "all", brainmask_file=seq_bet_mask, ref_file=ref_image, 
-                                    normal=True)         
+                    imq = Compute_Metric(input_image, brainmask_file=seq_bet_mask, ref_file=ref_image, normal=True)      
                     
                     res_imq = {'Sbj':subject_folder,
-                                'File': filename,                          
-                                'SSIM':imq[0], 
-                                'PSNR':imq[1], 
-                                'Tenengrad':imq[2],
-                                'GradEntropy':imq[3],
-                                'ImgEntropy':imq[4],
-                                'AES':imq[5],
-                                'CoEnt':imq[6]  
+                                'File': filename, 
+                                'AES':imq[0]
                                 }      
                     results_list.append(res_imq)
+                    
+                    # TODO: REMOVE THIS LINE
+                    print(res_imq)
                                                                                                                               
     print(f"Process completed for {subject_folder}")

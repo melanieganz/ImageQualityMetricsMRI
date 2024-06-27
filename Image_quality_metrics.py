@@ -8,10 +8,17 @@ without motion artifacts"
 
 import nibabel as nib
 import numpy as np
+
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
 from metrics.AES import aes
 from metrics.fsim import calc_fsim
+from metrics.gradient_metrics import *
+from metrics.perceptual_metric import perceptual_metric
 
-def Compute_Metric(filename, metric, brainmask_file=False, ref_file=False, 
+
+def Compute_Metric(filename, brainmask_file=False, ref_file=False, 
                    normal=True):
     '''
     
@@ -43,11 +50,20 @@ def Compute_Metric(filename, metric, brainmask_file=False, ref_file=False,
 
     '''
     
-    metric_dict = {
-        "full_reference": {
-            "FSIM": calc_fsim},
+    # metrics_dict = {
+    #     "full_reference": {
+    #         "FSIM": calc_fsim,
+    #         "PerceptualMetric": perceptual_metric},
+    #     "reference_free": {
+    #         "AES": aes,
+    #         "Tenengrad": tenengrad,
+    #         "NGS": normalized_gradient_squared,
+    #         "GradientEntropy": gradient_entropy}
+    # }
+    
+    metrics_dict = {
         "reference_free": {
-            "AES":aes}
+            "AES": aes}
     }
     
     img = nib.load(filename).get_fdata().astype(np.uint16)
@@ -60,58 +76,29 @@ def Compute_Metric(filename, metric, brainmask_file=False, ref_file=False,
     if ref_file != False:
         ref = nib.load(ref_file).get_fdata().astype(np.uint16)
     
-    if metric == 'all':
-        metrics = ['AES', 'FSIM']
-    else:
-        metrics = [metric]
-    
     res = []
-    for m in metrics:
-        if m in ['FSIM']:
+    
+    for m in metrics_dict["reference_free"]:        
+        if m in metrics_dict["reference_free"]:
             if brainmask_file != False:
-                brainmask_fl = brainmask.flatten()
-                d_ref = ref.flatten()
-                ref_ = d_ref[brainmask_fl>0]
-                data_ref = ref_
-                dat = img.flatten()
-                img_ = dat[brainmask_fl>0]
-                data_img = img_
+                img_masked = np.multiply(img, brainmask)
             else:
-                data_ref = ref
-                data_img = img
-            
+                img_masked = img
+                            
             if normal == True:
-                print('Values calculated on normalized images')
-                mean_ref = np.mean(data_ref)
-                std_ref = np.std(data_ref)
-                data_ref = (data_ref-mean_ref)/std_ref
+                mean_img = np.mean(img_masked)
+                std_img = np.std(img_masked)
+                img_final = (img_masked-mean_img)/std_img
+            else:
+                img_final = img_masked
                 
-                mean_img = np.mean(data_img)
-                std_img = np.std(data_img)
-                data_img = (data_img-mean_img)/std_img
+            metric_value = metrics_dict['reference_free'][m](img_final)
+            print(f"{m}: {metric_value}")
             
-            peak = np.amax(data_ref)
+            res = np.append(res,metric_value)
 
-            res.append(metric_dict[m](data_ref, data_img, 
-                                            data_range=peak, 
-                                            gaussian_weights=True))
-        
-        if m in ['AES']:
-            if brainmask_file != False:
-                brainmask_fl = brainmask.flatten()
-                dat = img.flatten()
-                img_ = dat[brainmask_fl>0]
-                data_img = img_
-                
-            if normal == True:
-                mean_img = np.mean(data_img)
-                std_img = np.std(data_img)
-                img_n = (img-mean_img)/std_img
-            else:
-                img_n = img_ 
-                
-            data_img = np.reshape(img_n,np.shape(img))
-            res.append(metric_dict[m](data_img, brainmask))
+        else:
+            raise NotImplementedError("Metric {} not implemented.".format(m))
 
     
     return res
