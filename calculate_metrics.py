@@ -12,14 +12,16 @@ import yaml
 import warnings
 warnings.filterwarnings("ignore")
 from data_utils import load_data
-from metrics.fsim import calc_fsim
+from metrics.similarity_metrics import fsim
 from metrics.gradient_metrics import *
-from metrics.perceptual_metric import perceptual_metric
+from metrics.perceptual_metrics import lpips
+from metrics.information_metrics import vif
 
 metrics_dict = {
     "full_reference": {
-        "FSIM": calc_fsim,
-        "PerceptualMetric": perceptual_metric},
+        "FSIM": fsim,
+        "VIF": vif,
+        "PerceptualMetric": lpips},
     "reference_free": {
         "Tenengrad": tenengrad,
         "NGS": normalized_gradient_squared,
