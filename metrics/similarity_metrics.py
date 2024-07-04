@@ -1,6 +1,7 @@
 import piq
 import torch
 
+
 def fsim(img, img_ref, reduction='mean'):
     """Calculate FSIM between two 3D images slice-wise.
 
