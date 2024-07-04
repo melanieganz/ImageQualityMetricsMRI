@@ -19,7 +19,7 @@ def fsim(img, img_ref, reduction='mean'):
 
     if reduction == 'mean':
         return torch.mean(fsim_values).item()
-    elif reduction == 'min':
+    elif reduction == 'worst':
         return torch.min(fsim_values).item()
     else:
         raise ValueError(f"Reduction method {reduction} not supported.")
