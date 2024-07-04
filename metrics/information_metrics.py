@@ -47,7 +47,7 @@ def vif(img, img_ref, reduction='mean'):
     if img.shape[3] < 41:
         img = extend_last_dim(img)
         img_ref = extend_last_dim(img_ref)
-    
+
     vif_values = piq.vif_p(img, img_ref, data_range=1., sigma_n_sq=0.4,
                            reduction='none')
 
