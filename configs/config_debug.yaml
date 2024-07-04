@@ -2,4 +2,5 @@ data:
   folder: "/home/iml/hannah.eichhorn/Data/IQM/openneuro_dataset/ds004332/"
   subjects: ["sub-01"]
 output:
-  metrics: ["Tenengrad", "NGS", "GradientEntropy", "VIF", "PerceptualMetric"]
+  metrics: ["FSIM", "Tenengrad", "NGS", "GradientEntropy", "VIF", "PerceptualMetric"]
+  reduction: "worst"   # or "mean"

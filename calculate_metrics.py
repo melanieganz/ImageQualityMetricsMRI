@@ -4,6 +4,8 @@ Temporary code to load one example dataset for trying out the metrics for now.
 
 # ToDo: proper normalization and masking!
 #   - check if Tenengrad, NGS and perceptual metric values make sense after masking
+#   - check if FSIM and VIF values make sense in the current implementation
+#   - include reduction method into metric call once implemented for all metrics
 
 import argparse
 import os
