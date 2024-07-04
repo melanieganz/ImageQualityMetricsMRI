@@ -3,7 +3,7 @@ import torch
 import numpy as np
 
 
-def lpips(img, img_ref):
+def lpips(img, img_ref, reduction='mean'):
     """ Calculate the perceptual metric between two images.
 
     The code is based on the article:
@@ -21,6 +21,9 @@ def lpips(img, img_ref):
         image for which the metrics should be calculated.
     img_ref : numpy array
         reference image.
+    reduction : str
+        reduction method for the LPIPS values of multiple slices. Options:
+        'mean' (default), 'worst' which returns the maximum LPIPS value.
 
     Returns
     -------
@@ -36,6 +39,11 @@ def lpips(img, img_ref):
     img = img.repeat(1, 3, 1, 1)
     img_ref = img_ref.repeat(1, 3, 1, 1)
 
-    loss_vgg =  loss_fn_vgg(img, img_ref).detach().numpy()
+    loss_vgg =  loss_fn_vgg(img, img_ref)
 
-    return np.mean(loss_vgg)
+    if reduction == 'mean':
+        return torch.mean(loss_vgg).item()
+    elif reduction == 'worst':
+        return torch.max(loss_vgg).item()
+    else:
+        raise ValueError(f"Reduction method {reduction} not supported.")
