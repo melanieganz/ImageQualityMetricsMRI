@@ -15,6 +15,7 @@ from data_utils import *
 from metrics.similarity_metrics import fsim
 from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif
+from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 
 from metrics.gradient_metrics import *
 from metrics.ImageEntropy import imageEntropy
@@ -56,6 +57,8 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
     
     metrics_dict = {
         "full_reference": {
+            'SSIM':structural_similarity, 
+            'PSNR':peak_signal_noise_ratio, 
             "FSIM": fsim,
             "VIF": vif,
             "PerceptualMetric": lpips},
@@ -97,7 +100,12 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
             img = img_masked
             ref = ref_masked
 
-        metric_value = metrics_dict['full_reference'][m](img, ref)
+        # Calculate metric: for SSIM and PSNR the data range must be set to 1
+        if m == "SSIM" or m == "PSNR":
+            metric_value = metrics_dict['full_reference'][m](img, ref, data_range=1)            
+        else:
+            metric_value = metrics_dict['full_reference'][m](img, ref)  
+            
             
         print(f"{m}: {metric_value}")
         
@@ -113,7 +121,8 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
             img_final = min_max_scale(img_masked)
         else:
             img_final = img_masked
-            
+        
+        # Calculate metric: 
         metric_value = metrics_dict['reference_free'][m](img_final)
             
         print(f"{m}: {metric_value}")

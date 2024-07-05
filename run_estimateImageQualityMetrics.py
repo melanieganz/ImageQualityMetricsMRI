@@ -69,11 +69,17 @@ for subject_folder in subject_folders:
                                 'NGS':imq[2],
                                 'Gradient Entropy':imq[3],
                                 'Entropy':imq[4],
-                                'CoEnt':imq[5]
+                                'CoEnt':imq[5],
+                                'SSIM':imq[6],
+                                'PSNR':imq[7],
+                                'FSIM':imq[8],
+                                'VIF':imq[9],
+                                'PerceptualMetric':imq[10],
                                 }      
                     results_list.append(res_imq)
-                    
-                    # TODO: REMOVE THIS LINE
-                    print(res_imq)
                                                                                                                               
     print(f"Process completed for {subject_folder}")
+    
+# Save results in a csv file
+results_df = pd.DataFrame(results_list)
+results_df.to_csv("ImageQualityMetrics.csv", index=False)
