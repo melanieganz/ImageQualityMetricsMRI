@@ -22,7 +22,7 @@ def calc_gradient_magnitude(img):
     return np.sqrt(grad_x ** 2 + grad_y ** 2 + grad_z ** 2)
 
 
-def tenengrad(img, brainmask=False):
+def tenengrad(img, brainmask=None):
     """Tenengrad measure of the input image.
 
     The code is based on the article:
@@ -46,14 +46,14 @@ def tenengrad(img, brainmask=False):
     grad = calc_gradient_magnitude(img)
 
     # apply flattened brainmask:
-    if brainmask is True:
+    if brainmask is not None:
         grad = grad.flatten()
         grad = grad[grad > 0]
 
     return np.mean(grad ** 2)
 
 
-def gradient_entropy(img, brainmask=False):
+def gradient_entropy(img, brainmask=None):
     """Gradient Entropy of the input image.
 
     The code is based on the article:
@@ -79,7 +79,7 @@ def gradient_entropy(img, brainmask=False):
     grad = calc_gradient_magnitude(img)  # maybe needs to be normalized
 
     # apply flattened brainmask:
-    if brainmask is True:
+    if brainmask is not None:
         grad = grad.flatten()
         grad = grad[grad > 0]
 
@@ -89,7 +89,7 @@ def gradient_entropy(img, brainmask=False):
     return ge
 
 
-def normalized_gradient_squared(img, brainmask=False):
+def normalized_gradient_squared(img, brainmask=None):
     """Normalized gradient squared measure of the input image.
 
     The code is based on the article:
@@ -101,9 +101,9 @@ def normalized_gradient_squared(img, brainmask=False):
     ----------
     img : numpy array
         image for which the metrics should be calculated.
-    brainmask : boolean True or False, optional
-        If True, a brainmask was used to mask the images before 
-        calculating the metrics. Image is flattened prior metric 
+    brainmask : bool, optional
+        If True, a brainmask was used to mask the images before
+        calculating the metrics. Image is flattened prior metric
         estimation. The default is False.
 
     Returns
@@ -115,7 +115,7 @@ def normalized_gradient_squared(img, brainmask=False):
     grad = calc_gradient_magnitude(img)
 
     # apply brainmask:
-    if brainmask is True:
+    if brainmask is not None:
         grad = grad.flatten()
         grad = grad[grad > 0]
 

@@ -81,21 +81,40 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
         ref = nib.load(ref_file).get_fdata().astype(np.uint16)
     
     res = []
+      
+    for m in metrics_dict["full_reference"]:
+        if brainmask_file != False:
+            img_masked = np.multiply(img, brainmask)
+            ref_masked = np.multiply(ref, brainmask)
+        else:
+            img_masked = img
+            ref_masked = ref
+        
+        if normal == True:
+            img = min_max_scale(img_masked)
+            ref = min_max_scale(ref_masked)
+        else:
+            img = img_masked
+            ref = ref_masked
+
+        metric_value = metrics_dict['full_reference'][m](img, ref)
+            
+        print(f"{m}: {metric_value}")
+        
+        res = np.append(res,metric_value)
     
     for m in metrics_dict["reference_free"]:
         if brainmask_file != False:
             img_masked = np.multiply(img, brainmask)
-            mask = True
         else:
             img_masked = img
-            mask = False
                         
         if normal == True and m != "CoEnt":
             img_final = min_max_scale(img_masked)
-            metric_value = metrics_dict['reference_free'][m](img_final, mask)
         else:
             img_final = img_masked
-            metric_value = metrics_dict['reference_free'][m](img_final)
+            
+        metric_value = metrics_dict['reference_free'][m](img_final)
             
         print(f"{m}: {metric_value}")
         

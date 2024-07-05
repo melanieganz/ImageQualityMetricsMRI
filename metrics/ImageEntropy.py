@@ -10,15 +10,15 @@ import numpy as np
 from scipy.stats import entropy
 
 
-def imageEntropy(img, brainmask = False):
+def imageEntropy(img, brainmask = None):
     '''
     Parameters
     ----------
     img : numpy array
         image for which the metrics should be calculated.
-    brainmask : boolean True or False, optional
-        If True, a brainmask was used to mask the images before 
-        calculating the metrics. Image is flattened prior metric 
+    brainmask : bool, optional
+        If True, a brainmask was used to mask the images before
+        calculating the metrics. Image is flattened prior metric
         estimation. The default is False.
         
     Returns
@@ -28,7 +28,7 @@ def imageEntropy(img, brainmask = False):
     '''
     
     
-    if brainmask is True:
+    if brainmask is not None:
         image = img.flatten()
         image = image[image > 0]
     else:

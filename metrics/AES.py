@@ -14,7 +14,7 @@ from scipy.ndimage import convolve
 from data_utils import crop_img, bin_img
 
 
-def aes(img, brainmask = False, sigma=np.sqrt(2), n_levels = 128, bin = False, crop = True, weigt_avg = False):
+def aes(img, brainmask = None, sigma=np.sqrt(2), n_levels = 128, bin = False, crop = True, weigt_avg = False):
     '''
     Parameters
     ----------
@@ -67,7 +67,7 @@ def aes(img, brainmask = False, sigma=np.sqrt(2), n_levels = 128, bin = False, c
         #Slice to do operations on
         im_slice = img[:,:,slice]
         
-        if brainmask is True:
+        if brainmask is not None:
             im_slice = im_slice>0
 
         #Weight, proportion of non zero pixels
