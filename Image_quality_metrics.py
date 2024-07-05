@@ -6,19 +6,20 @@ without motion artifacts"
 
 '''
 
-import nibabel as nib
 import numpy as np
-
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+import nibabel as nib
+import warnings
+warnings.filterwarnings("ignore")
 
 from data_utils import *
-from metrics.AES import aes
-from metrics.fsim import calc_fsim
+from metrics.similarity_metrics import fsim
+from metrics.perceptual_metrics import lpips
+from metrics.information_metrics import vif
+
 from metrics.gradient_metrics import *
 from metrics.ImageEntropy import imageEntropy
+from metrics.AES import aes
 from metrics.CoEnt import *
-from metrics.perceptual_metric import perceptual_metric
 
 
 def Compute_Metric(filename, brainmask_file=False, ref_file=False, 
@@ -54,6 +55,11 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
     '''
     
     metrics_dict = {
+        "full_reference": {
+            "FSIM": fsim,
+            "VIF": vif,
+            "PerceptualMetric": lpips},
+
         "reference_free": {
             "AES": aes,
             "Tenengrad": tenengrad,
