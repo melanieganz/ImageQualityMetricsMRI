@@ -20,26 +20,28 @@ def find_reference_images(directory, seq):
             reference_images=os.path.join(directory, filename)
     return reference_images
 
-# ------------------------------------------------------------------------------------------------------
-# Pre-processing applied on data from:
-# Melanie Ganz and Hannah Eichhorn (2022). Datasets with and without deliberate head movements for 
-# evaluating the performance of markerless prospective motion correction and selective reacquisition 
-# in a general clinical protocol for brain MRI. 
-# ------------------------------------------------------------------------------------------------------
-# The data is available for download at OpenNeuro. 
-# ------------------------------------------------------------------------------------------------------
-# Before downloading, make sure you have Datalad installed:
-    # pip install datalad[full] (pip)
-    # or
-    # conda install -c conda-forge datalad (conda)
-# And Git Annex: 
-    # sudo apt-get install git-annex (Debian/Ubuntu)
-    # or
-    # brew install git-annex (Mac)
-# ------------------------------------------------------------------------------------------------------
-# This code requires FSL. 
-    # https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation
-# ------------------------------------------------------------------------------------------------------
+'''
+------------------------------------------------------------------------------------------------------
+Pre-processing applied on data from:
+Melanie Ganz and Hannah Eichhorn (2022). Datasets with and without deliberate head movements for 
+evaluating the performance of markerless prospective motion correction and selective reacquisition 
+in a general clinical protocol for brain MRI. 
+------------------------------------------------------------------------------------------------------
+The data is available for download at OpenNeuro. 
+------------------------------------------------------------------------------------------------------
+Before downloading, make sure you have Datalad installed:
+    pip install datalad[full] (pip)
+    or
+    conda install -c conda-forge datalad (conda)
+And Git Annex: 
+    sudo apt-get install git-annex (Debian/Ubuntu)
+    or
+    brew install git-annex (Mac)
+------------------------------------------------------------------------------------------------------
+This code requires FSL. 
+    https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation
+------------------------------------------------------------------------------------------------------
+'''
 
 # URL of the Git repository to clone
 repo_url = "https://github.com/OpenNeuroDatasets/ds004332.git"
