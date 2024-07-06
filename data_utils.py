@@ -23,7 +23,7 @@ def min_max_scale(img):
 
 
 def normalize(img):
-    """ Rescale image between [0,1] using the min/max method """
+    """ Normalization to mean=0, std=1 """
     mean_img = np.mean(img)
     std_img = np.std(img)
     img_norm = (img-mean_img)/std_img

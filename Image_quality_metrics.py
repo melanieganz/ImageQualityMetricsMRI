@@ -104,7 +104,7 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
         if m == "SSIM" or m == "PSNR":
             metric_value = metrics_dict['full_reference'][m](img, ref, data_range=1)            
         else:
-            metric_value = metrics_dict['full_reference'][m](img, ref)  
+            metric_value = metrics_dict['full_reference'][m](img, ref, reduction='worst')  
             
             
         print(f"{m}: {metric_value}")
