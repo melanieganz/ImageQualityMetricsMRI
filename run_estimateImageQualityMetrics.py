@@ -27,7 +27,7 @@ results_list = []
 
 # Loop through each subject folder (sub-01, sub-02, ..., sub-22)
 subject_folders = sorted(f for f in os.listdir(data_dir) if f.startswith("sub-"))
-for subject_folder in ['sub-01']:#in subject_folders:   
+for subject_folder in subject_folders:   
 
     for seq in sequences:
         seq_folder = os.path.join(data_dir, subject_folder, seq)
