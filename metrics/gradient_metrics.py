@@ -32,10 +32,10 @@ def tenengrad(img, brainmask=None):
     ----------
     img : numpy array
         image for which the metrics should be calculated.
-    brainmask : numpy array or list, optional
-        If a non-empty numpy array is given, this brainmask will be used to
-        mask the images before calculating the metrics. If an empty list is
-        given, no mask is applied. The default is [].
+    brainmask : boolean True or False, optional
+        If True, a brainmask was used to mask the images before 
+        calculating the metrics. Image is flattened prior metric 
+        estimation. The default is False.
 
     Returns
     -------
@@ -65,10 +65,10 @@ def gradient_entropy(img, brainmask=None):
     ----------
     img : numpy array
         image for which the metrics should be calculated.
-    brainmask : numpy array or list, optional
-        If not None, this brainmask will be used to mask the images before
-        calculating the metrics. Otherwise, no mask is applied. The default
-        is None.
+    brainmask : boolean True or False, optional
+        If True, a brainmask was used to mask the images before 
+        calculating the metrics. Image is flattened prior metric 
+        estimation. The default is False.
 
     Returns
     -------
@@ -101,10 +101,10 @@ def normalized_gradient_squared(img, brainmask=None):
     ----------
     img : numpy array
         image for which the metrics should be calculated.
-    brainmask : numpy array or list, optional
-        If a non-empty numpy array is given, this brainmask will be used to
-        mask the images before calculating the metric. If None, no mask is
-        applied. The default is None.
+    brainmask : bool, optional
+        If True, a brainmask was used to mask the images before
+        calculating the metrics. Image is flattened prior metric
+        estimation. The default is False.
 
     Returns
     -------
@@ -119,4 +119,5 @@ def normalized_gradient_squared(img, brainmask=None):
         grad = grad.flatten()
         grad = grad[grad > 0]
 
-    return np.mean((grad/np.sum(grad))**2)
+    #FIXME: added a scaling factor here otherwise the value is too small, not sure if it is a good idea? 
+    return np.sum((grad / np.sum(grad)) ** 2) * len(grad)
