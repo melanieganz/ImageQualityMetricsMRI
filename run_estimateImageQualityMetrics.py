@@ -27,7 +27,7 @@ results_list = []
 
 # Loop through each subject folder (sub-01, sub-02, ..., sub-22)
 subject_folders = sorted(f for f in os.listdir(data_dir) if f.startswith("sub-"))
-for subject_folder in subject_folders:   
+for subject_folder in ['sub-01']:#in subject_folders:   
 
     for seq in sequences:
         seq_folder = os.path.join(data_dir, subject_folder, seq)
@@ -45,8 +45,8 @@ for subject_folder in subject_folders:
             subprocess.run(command, check=True, shell=False)
 
             # For each file (reference incuded):
-            for filename in os.listdir(seq_folder):
-                if seq in filename.lower() and filename.endswith(".nii") or filename.endswith(".gz"):
+            for filename in os.listdir(seq_folder):                
+                if seq.lower() in filename.lower() and filename.endswith((".nii", ".gz")) and "mask" not in filename and "bet" not in filename:
                     
                     # Get the mask file
                     if seq =="mprage":
