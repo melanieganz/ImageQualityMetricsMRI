@@ -24,7 +24,7 @@ from metrics.CoEnt import *
 
 
 def Compute_Metric(filename, brainmask_file=False, ref_file=False, 
-                   normal=True):
+                   normal=True, permute=False):
     '''
     
 
@@ -82,7 +82,14 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
         
     if ref_file != False:
         ref = nib.load(ref_file).get_fdata().astype(np.uint16)
-    
+        
+    # Permute data
+    if permute == True:
+        img = np.transpose(img, (2,0,1))
+        ref = np.transpose(ref, (2,0,1))
+    if permute == True and brainmask_file != False:
+        brainmask = np.transpose(brainmask, (2,0,1))  
+          
     res = []
       
     for m in metrics_dict["full_reference"]:

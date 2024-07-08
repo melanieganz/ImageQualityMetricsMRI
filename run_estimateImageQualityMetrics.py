@@ -29,7 +29,7 @@ results_list = []
 subject_folders = sorted(f for f in os.listdir(data_dir) if f.startswith("sub-"))
 for subject_folder in subject_folders:   
 
-    for seq in sequences:
+    for seq in ['t1tirm']:#sequences:
         seq_folder = os.path.join(data_dir, subject_folder, seq)
         
         # Find reference for that sequence (if available)
@@ -60,7 +60,10 @@ for subject_folder in subject_folders:
                     print(f"Reference is {ref_image}")       
                     
                     # run metric calculation
-                    imq = Compute_Metric(input_image, brainmask_file=seq_bet_mask, ref_file=ref_image, normal=True)      
+                    if seq == "t1tirm" or seq == "t2tse":
+                        imq = Compute_Metric(input_image, brainmask_file=seq_bet_mask, ref_file=ref_image, normal=True, permute=True)
+                    else:
+                        imq = Compute_Metric(input_image, brainmask_file=seq_bet_mask, ref_file=ref_image, normal=True, permute=False)      
                     
                     res_imq = {'Sbj':subject_folder,
                                 'File': filename, 

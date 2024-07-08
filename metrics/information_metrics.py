@@ -35,19 +35,6 @@ def vif(img, img_ref, reduction='mean'):
     # print(img.shape)
     img_ref = torch.from_numpy(img_ref[:, None]).float()
     
-    # Function to extend the last dimension to 41 by zero filling
-    def extend_last_dim(img):
-        zero_padding = torch.zeros(img.shape[0], img.shape[1], 
-                                   img.shape[2], 41-img.shape[3])
-        img = torch.cat((img, zero_padding), dim=3)
-        return img
-    
-    # Extend the last dimension to 41 if necessary
-    # FIXME: this is the minimum number for VIF to run, but not sure why...
-    if img.shape[3] < 41:
-        img = extend_last_dim(img)
-        img_ref = extend_last_dim(img_ref)
-
     vif_values = piq.vif_p(img, img_ref, data_range=1., sigma_n_sq=0.4,
                            reduction='none')
 
