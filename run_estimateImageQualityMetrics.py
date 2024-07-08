@@ -64,17 +64,17 @@ for subject_folder in subject_folders:
                     
                     res_imq = {'Sbj':subject_folder,
                                 'File': filename, 
-                                'AES':imq[0],
-                                'Tenengrad':imq[1],
-                                'NGS':imq[2],
-                                'Gradient Entropy':imq[3],
-                                'Entropy':imq[4],
-                                'CoEnt':imq[5],
-                                'SSIM':imq[6],
-                                'PSNR':imq[7],
-                                'FSIM':imq[8],
-                                'VIF':imq[9],
-                                'PerceptualMetric':imq[10],
+                                'SSIM':imq[0],
+                                'PSNR':imq[1],
+                                'FSIM':imq[2],
+                                'VIF':imq[3],
+                                'PerceptualMetric':imq[4],
+                                'AES':imq[5],
+                                'Tenengrad':imq[6],
+                                'NGS':imq[7],
+                                'GradientEntropy':imq[8],
+                                'Entropy':imq[9],
+                                'CoEnt':imq[10],
                                 }      
                     results_list.append(res_imq)
                                                                                                                               
