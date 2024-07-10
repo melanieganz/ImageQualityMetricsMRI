@@ -73,13 +73,16 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
             }
     }
     
+    # Load data
     img = nib.load(filename).get_fdata().astype(np.uint16)
     
+    # Load brainmask
     if brainmask_file != False:
         brainmask = nib.load(brainmask_file).get_fdata().astype(np.uint16)
     else:
         brainmask = []
-        
+    
+    # Load reference        
     if ref_file != False:
         ref = nib.load(ref_file).get_fdata().astype(np.uint16)
         
@@ -88,32 +91,33 @@ def Compute_Metric(filename, brainmask_file=False, ref_file=False,
         img = np.transpose(img, (2,0,1))
         ref = np.transpose(ref, (2,0,1))
     if permute == True and brainmask_file != False:
-        brainmask = np.transpose(brainmask, (2,0,1))  
-          
+        brainmask = np.transpose(brainmask, (2,0,1))
+
+    # Apply brainmask
+    if brainmask_file != False:
+        img_masked = np.multiply(img, brainmask)
+        ref_masked = np.multiply(ref, brainmask)
+    else:
+        img_masked = img
+        ref_masked = ref
+
+    # Normalization
+    if normal == True:
+        img = min_max_scale(img_masked)
+        ref = min_max_scale(ref_masked)
+    else:
+        img = img_masked
+        ref = ref_masked
+            
     res = []
       
     for m in metrics_dict["full_reference"]:
-        if brainmask_file != False:
-            img_masked = np.multiply(img, brainmask)
-            ref_masked = np.multiply(ref, brainmask)
-        else:
-            img_masked = img
-            ref_masked = ref
-        
-        if normal == True:
-            img = min_max_scale(img_masked)
-            ref = min_max_scale(ref_masked)
-        else:
-            img = img_masked
-            ref = ref_masked
-
         # Calculate metric: for SSIM and PSNR the data range must be set to 1
         if m == "SSIM" or m == "PSNR":
-            metric_value = metrics_dict['full_reference'][m](img, ref, data_range=1)            
+            metric_value = metrics_dict['full_reference'][m](img, ref, data_range=1.)            
         else:
             metric_value = metrics_dict['full_reference'][m](img, ref, reduction='worst')  
-            
-            
+                        
         print(f"{m}: {metric_value}")
         
         res = np.append(res,metric_value)
