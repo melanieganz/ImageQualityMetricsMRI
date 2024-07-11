@@ -21,7 +21,6 @@ dependencies:
   - setuptools=69.5.1=py312h06a4308_0
   - sqlite=3.45.3=h5eee18b_0
   - tk=8.6.14=h39e8969_0
-  - tzdata=2024a=h04d1e81_0
   - wheel=0.43.0=py312h06a4308_0
   - xz=5.4.6=h5eee18b_1
   - zlib=1.2.13=h5eee18b_1
@@ -87,6 +86,7 @@ dependencies:
     - nvidia-nvtx-cu12==12.1.105
     - opencv-python==4.10.0.84
     - packaging==24.1
+    - pandas==2.2.2
     - patool==2.2.0
     - phasepack==1.5
     - pillow==10.3.0
@@ -100,6 +100,7 @@ dependencies:
     - pytest-fail-slow==0.6.0
     - python-dateutil==2.9.0.post0
     - python-gitlab==4.6.0
+    - pytz==2024.1
     - pywavelets==1.6.0
     - pyyaml==6.0.1
     - requests==2.32.3
@@ -119,8 +120,8 @@ dependencies:
     - types-python-dateutil==2.9.0.20240316
     - types-requests==2.32.0.20240602
     - typing-extensions==4.12.2
+    - tzdata==2024.1
     - urllib3==2.2.1
     - vcrpy==6.0.1
     - wrapt==1.16.0
     - yarl==1.9.4
-prefix: /home/iml/hannah.eichhorn/anaconda3/envs/dev_iqm

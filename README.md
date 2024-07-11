@@ -22,3 +22,11 @@ conda activate dev_iqm
 
 6. You're all set! You can now run the scripts in this project.
 
+
+## Steps to reproduce the analysis
+
+1. Download and preprocess the data with:
+```
+conda activate dev_iqm
+nohup python -u preprocessingData.py > preprocess_data.log &
+```
