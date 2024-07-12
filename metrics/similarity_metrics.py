@@ -50,3 +50,30 @@ def ssim(img, img_ref, reduction='mean', brainmask=None):
         return np.min(ssim_values)
     else:
         raise ValueError(f"Reduction method {reduction} not supported.")
+
+
+def psnr(img, img_ref, reduction='mean', brainmask=None, data_range=1.0):
+    """Calculate PSNR between two 3D images slice-wise.
+
+    Notes:
+        - Slice dimension is assumed to be the first dimension.
+        - The images are assumed to be normalised to [0, 1].
+        - If brainmask is not None, the calculated PSNR values are masked
+        with the brainmask.
+        - The final metric value is calculated as mean or min over all slices.
+    """
+
+    img, img_ref = img.astype(np.float64), img_ref.astype(np.float64)
+    mse = (img - img_ref) ** 2
+
+    psnr_values = 10 * np.log10(data_range**2 / mse)
+    if brainmask is not None:
+        psnr_values = np.ma.masked_array(psnr_values, mask=(brainmask != 1))
+    psnr_values = np.mean(psnr_values, axis=(1, 2))
+
+    if reduction == 'mean':
+        return np.mean(psnr_values)
+    elif reduction == 'worst':
+        return np.min(psnr_values)
+    else:
+        raise ValueError(f"Reduction method {reduction} not supported.")

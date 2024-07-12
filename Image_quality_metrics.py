@@ -12,7 +12,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from data_utils import *
-from metrics.similarity_metrics import fsim, ssim
+from metrics.similarity_metrics import fsim, ssim, psnr
 from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif
 from skimage.metrics import peak_signal_noise_ratio
@@ -77,7 +77,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     metrics_dict = {
         "full_reference": {
             'SSIM':ssim,
-            'PSNR':peak_signal_noise_ratio, 
+            'PSNR':psnr,
             "FSIM": fsim,
             "VIF": vif,
             "PerceptualMetric": lpips},
@@ -136,10 +136,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     res = []
     for m in metrics_dict["full_reference"]:
         # Calculate metric: for SSIM and PSNR the data range must be set to 1
-        if m == "PSNR":
-            metric_value = metrics_dict['full_reference'][m](img, ref,
-                                                             data_range=1)
-        elif m in ["SSIM"]:
+        if m in ["SSIM", "PSNR"]:
             if mask_metric_values:
                 metric_value = metrics_dict['full_reference'][m](
                     img, ref, reduction=reduction, brainmask=brainmask
