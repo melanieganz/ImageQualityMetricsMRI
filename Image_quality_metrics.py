@@ -135,7 +135,6 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     
     res = []
     for m in metrics_dict["full_reference"]:
-        # Calculate metric: for SSIM and PSNR the data range must be set to 1
         if m in ["SSIM", "PSNR"]:
             if mask_metric_values:
                 metric_value = metrics_dict['full_reference'][m](
@@ -154,8 +153,17 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
         res = np.append(res,metric_value)
 
     for m in metrics_dict["reference_free"]:
-        # Calculate metric:
-        metric_value = metrics_dict['reference_free'][m](img)
+        if m in ["AES"]:
+            if mask_metric_values:
+                metric_value = metrics_dict['reference_free'][m](
+                    img, brainmask, reduction=reduction
+                )
+            else:
+                metric_value = metrics_dict['reference_free'][m](
+                    img, reduction=reduction
+                )
+        else:
+            metric_value = metrics_dict['reference_free'][m](img)
 
         print(f"{m}: {metric_value}")
         res = np.append(res,metric_value)
