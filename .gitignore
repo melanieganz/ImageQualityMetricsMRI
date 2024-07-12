@@ -1,2 +1,3 @@
 .idea/*
 OpenNeuro_dataset/
+calculate_metrics.py

@@ -67,7 +67,9 @@ for subject_folder in subject_folders:
                     # run metric calculation
                     imq = compute_metrics(input_image,
                                           brainmask_file=seq_bet_mask,
-                                          ref_file=ref_image, normal=True)
+                                          ref_file=ref_image, normal=True,
+                                          mask_metric_values=True,
+                                          reduction="worst")
                     
                     res_imq = {'Sbj':subject_folder,
                                'File': filename,

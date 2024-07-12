@@ -12,10 +12,10 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from data_utils import *
-from metrics.similarity_metrics import fsim
+from metrics.similarity_metrics import fsim, ssim
 from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif
-from skimage.metrics import peak_signal_noise_ratio, structural_similarity
+from skimage.metrics import peak_signal_noise_ratio
 
 from metrics.gradient_metrics import *
 from metrics.ImageEntropy import imageEntropy
@@ -23,23 +23,27 @@ from metrics.AES import aes
 from metrics.CoEnt import *
 
 
-def sort_out_zero_slices(img, ref):
+def sort_out_zero_slices(img, ref, brainmask=None):
     """ Only keep non-zero slices in img and ref. """
 
     zero_slices_img = np.where(np.sum(img, axis=(1, 2)) == 0)[0]
+
     if ref is not None:
         zero_slices_ref = np.where(np.sum(ref, axis=(1, 2)) == 0)[0]
         zero_slices = np.unique(np.concatenate((zero_slices_img, zero_slices_ref)))
-        img = np.delete(img, zero_slices, axis=0)
         ref = np.delete(ref, zero_slices, axis=0)
     else:
-        img = np.delete(img, zero_slices_img, axis=0)
-        ref = None
-    return img, ref
+        zero_slices = zero_slices_img
+
+    img = np.delete(img, zero_slices, axis=0)
+    if brainmask is not None:
+        brainmask = np.delete(brainmask, zero_slices_img, axis=0)
+
+    return img, ref, brainmask
 
 
 def compute_metrics(filename, brainmask_file=False, ref_file=False,
-                    normal=True):
+                    normal=True, mask_metric_values=False, reduction='worst'):
     """
     Calculate metrics for a given image.
 
@@ -57,6 +61,11 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     normal : bool, optional
         whether the data should be normalized before metric calculation. The
         default is True.
+    mask_metric_values : bool, optional
+        whether the brainmask should be multiplied to the images (False) or
+        used to mask the metric values (True). Only applicable to some metrics.
+    reduction : str, optional
+        reduction method for the metric calculation. The default is 'worst'.
 
     Returns
     -------
@@ -67,7 +76,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     
     metrics_dict = {
         "full_reference": {
-            'SSIM':structural_similarity, 
+            'SSIM':ssim,
             'PSNR':peak_signal_noise_ratio, 
             "FSIM": fsim,
             "VIF": vif,
@@ -89,7 +98,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     if brainmask_file:
         brainmask = nib.load(brainmask_file).get_fdata().astype(np.uint16)
     else:
-        brainmask = []
+        brainmask = None
         
     if ref_file:
         ref = nib.load(ref_file).get_fdata().astype(np.uint16)
@@ -100,8 +109,8 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     if "t1tirm" in filename or "t2tse" in filename:
         img = np.rollaxis(img, 2)
         ref = (np.rollaxis(ref, 2) if ref is not None else None)
-        if brainmask_file:
-            brainmask = np.rollaxis(brainmask, 2)
+        brainmask = (np.rollaxis(brainmask, 2) if brainmask is not None
+                     else None)
 
     # Apply brainmask if available:
     if brainmask_file:
@@ -112,7 +121,9 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
         ref_masked = ref
 
     # Sort out the slices with only zeros:
-    img_masked, ref_masked = sort_out_zero_slices(img_masked, ref_masked)
+    img_masked, ref_masked, brainmask = sort_out_zero_slices(img_masked,
+                                                             ref_masked,
+                                                             brainmask)
 
     # Normalization:
     if normal:
@@ -125,12 +136,22 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     res = []
     for m in metrics_dict["full_reference"]:
         # Calculate metric: for SSIM and PSNR the data range must be set to 1
-        if m == "SSIM" or m == "PSNR":
+        if m == "PSNR":
             metric_value = metrics_dict['full_reference'][m](img, ref,
                                                              data_range=1)
+        elif m in ["SSIM"]:
+            if mask_metric_values:
+                metric_value = metrics_dict['full_reference'][m](
+                    img, ref, reduction=reduction, brainmask=brainmask
+                )
+            else:
+                metric_value = metrics_dict['full_reference'][m](
+                    img, ref, reduction=reduction, brainmask=None
+                )
         else:
-            metric_value = metrics_dict['full_reference'][m](img, ref,
-                                                             reduction='worst')
+            metric_value = metrics_dict['full_reference'][m](
+                img, ref, reduction=reduction
+            )
 
         print(f"{m}: {metric_value}")
         res = np.append(res,metric_value)
