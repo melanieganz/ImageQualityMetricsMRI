@@ -18,5 +18,15 @@ conda env create -f environment.yaml
 conda activate dev_iqm
 ```
 
-5. You're all set! You can now run the scripts in this project.
+5. For installing FSL (to use BET and FLIRT tools for brain mask extraction and registration), follow these instructions: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation
 
+6. You're all set! You can now run the scripts in this project.
+
+
+## Steps to reproduce the analysis
+
+1. Download and preprocess the data with:
+```
+conda activate dev_iqm
+nohup python -u preprocessingData.py > preprocess_data.log &
+```

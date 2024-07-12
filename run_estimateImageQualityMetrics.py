@@ -7,7 +7,7 @@ import subprocess
 from os import listdir
 from os.path import join
 
-from Image_quality_metrics import Compute_Metric
+from Image_quality_metrics import compute_metrics
 
 data_dir = "OpenNeuro_dataset"
 
@@ -16,7 +16,8 @@ def find_reference_images(directory, seq):
     reference_images = None 
     
     for filename in os.listdir(directory):
-        if seq.lower() in filename.lower() and filename.endswith(".nii") and "run-01" in filename and "pmcoff" in filename:
+        if (seq.lower() in filename.lower() and filename.endswith(".nii")
+                and "run-01" in filename and "pmcoff" in filename):
             reference_images=os.path.join(directory, filename)
     return reference_images
 
@@ -46,13 +47,17 @@ for subject_folder in subject_folders:
 
             # For each file (reference incuded):
             for filename in os.listdir(seq_folder):                
-                if seq.lower() in filename.lower() and filename.endswith((".nii", ".gz")) and "mask" not in filename and "bet" not in filename:
+                if (seq.lower() in filename.lower()
+                        and filename.endswith((".nii", ".gz"))
+                        and "mask" not in filename and "bet" not in filename):
                     
                     # Get the mask file
                     if seq =="mprage":
-                        seq_bet_mask = os.path.join(seq_folder, f"bet_{seq}_mask.nii.gz")
+                        seq_bet_mask = os.path.join(seq_folder,
+                                                    f"bet_{seq}_mask.nii.gz")
                     else:
-                        seq_bet_mask = os.path.join(seq_folder, f"align_{seq}_mask.nii.gz")
+                        seq_bet_mask = os.path.join(seq_folder,
+                                                    f"align_{seq}_mask.nii.gz")
             
                     input_image = os.path.join(seq_folder, filename)
                     print(f"Input image is {input_image}")   
@@ -60,22 +65,24 @@ for subject_folder in subject_folders:
                     print(f"Reference is {ref_image}")       
                     
                     # run metric calculation
-                    imq = Compute_Metric(input_image, brainmask_file=seq_bet_mask, ref_file=ref_image, normal=True)      
+                    imq = compute_metrics(input_image,
+                                          brainmask_file=seq_bet_mask,
+                                          ref_file=ref_image, normal=True)
                     
                     res_imq = {'Sbj':subject_folder,
-                                'File': filename, 
-                                'SSIM':imq[0],
-                                'PSNR':imq[1],
-                                'FSIM':imq[2],
-                                'VIF':imq[3],
-                                'PerceptualMetric':imq[4],
-                                'AES':imq[5],
-                                'Tenengrad':imq[6],
-                                'NGS':imq[7],
-                                'GradientEntropy':imq[8],
-                                'Entropy':imq[9],
-                                'CoEnt':imq[10],
-                                }      
+                               'File': filename,
+                               'SSIM':imq[0],
+                               'PSNR':imq[1],
+                               'FSIM':imq[2],
+                               'VIF':imq[3],
+                               'PerceptualMetric':imq[4],
+                               'AES':imq[5],
+                               'Tenengrad':imq[6],
+                               'NGS':imq[7],
+                               'GradientEntropy':imq[8],
+                               'Entropy':imq[9],
+                               'CoEnt':imq[10],
+                               }
                     results_list.append(res_imq)
                                                                                                                               
     print(f"Process completed for {subject_folder}")
