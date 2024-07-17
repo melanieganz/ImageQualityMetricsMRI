@@ -17,7 +17,6 @@ from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif, image_entropy
 from skimage.metrics import peak_signal_noise_ratio
 from metrics.gradient_metrics import *
-from metrics.AES import aes
 from metrics.CoEnt import *
 
 
