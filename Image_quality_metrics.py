@@ -16,7 +16,7 @@ from metrics.similarity_metrics import fsim, ssim, psnr
 from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif
 from skimage.metrics import peak_signal_noise_ratio
-
+git 
 from metrics.gradient_metrics import *
 from metrics.ImageEntropy import imageEntropy
 from metrics.AES import aes
@@ -26,7 +26,7 @@ from metrics.CoEnt import *
 def sort_out_zero_slices(img, ref, brainmask=None):
     """ Only keep non-zero slices in img and ref. """
 
-    zero_slices_img = np.where(np.sum(img, axis=(1, 2)) == 0)[0]
+    zero_slices_img = np.where(np.sum(img, axis=(1, 2)) / img[0].size < 0.1)[0]
 
     if ref is not None:
         zero_slices_ref = np.where(np.sum(ref, axis=(1, 2)) == 0)[0]
