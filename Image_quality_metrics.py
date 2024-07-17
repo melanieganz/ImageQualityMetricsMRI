@@ -80,14 +80,14 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
             'PSNR':psnr,
             "FSIM": fsim,
             "VIF": vif,
-            "PerceptualMetric": lpips},
+            "LPIPS": lpips},
 
         "reference_free": {
             "AES": aes,
-            "Tenengrad": tenengrad,
+            "TG": tenengrad,
             "NGS": normalized_gradient_squared,
-            "GradientEntropy": gradient_entropy, 
-            "Entropy": imageEntropy,
+            "GE": gradient_entropy,
+            "IE": imageEntropy,
             "CoEnt": coent
             }
     }
@@ -153,7 +153,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
         res = np.append(res,metric_value)
 
     for m in metrics_dict["reference_free"]:
-        if m in ["AES"]:
+        if m in ["AES", "TG"]:
             if mask_metric_values:
                 metric_value = metrics_dict['reference_free'][m](
                     img, brainmask, reduction=reduction

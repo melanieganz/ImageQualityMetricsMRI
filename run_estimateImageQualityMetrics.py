@@ -77,12 +77,12 @@ for subject_folder in subject_folders:
                                'PSNR':imq[1],
                                'FSIM':imq[2],
                                'VIF':imq[3],
-                               'PerceptualMetric':imq[4],
+                               'LPIPS':imq[4],
                                'AES':imq[5],
-                               'Tenengrad':imq[6],
+                               'TG':imq[6],
                                'NGS':imq[7],
-                               'GradientEntropy':imq[8],
-                               'Entropy':imq[9],
+                               'GE':imq[8],
+                               'IE':imq[9],
                                'CoEnt':imq[10],
                                }
                     results_list.append(res_imq)
