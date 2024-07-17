@@ -3,7 +3,7 @@ from scipy.ndimage import sobel
 from scipy.stats import entropy
 
 
-def calc_gradient_magnitude(img):
+def calc_gradient_magnitude(img, mode="2d"):
     """Calculate the magnitude of the image gradient.
 
     Note:
@@ -15,14 +15,19 @@ def calc_gradient_magnitude(img):
 
     img = img.astype(float)
 
-    grad_x = sobel(img, axis=0, mode='reflect')
-    grad_y = sobel(img, axis=1, mode='reflect')
-    grad_z = sobel(img, axis=2, mode='reflect')
+    grad_x = sobel(img, axis=1, mode='reflect')
+    grad_y = sobel(img, axis=2, mode='reflect')
 
-    return np.sqrt(grad_x ** 2 + grad_y ** 2 + grad_z ** 2)
+    if mode == "2d":
+        return np.sqrt(grad_x ** 2 + grad_y ** 2)
+    elif mode == "3d":
+        grad_z = sobel(img, axis=0, mode='reflect')
+        return np.sqrt(grad_x ** 2 + grad_y ** 2 + grad_z ** 2)
+    else:
+        raise ValueError(f"Mode {mode} not supported.")
 
 
-def tenengrad(img, brainmask=None):
+def tenengrad(img, brainmask=None, reduction='mean'):
     """Tenengrad measure of the input image.
 
     The code is based on the article:
@@ -43,17 +48,21 @@ def tenengrad(img, brainmask=None):
         Tenengrad measure of the input image.
     """
 
-    grad = calc_gradient_magnitude(img)
+    grad = calc_gradient_magnitude(img, mode="2d")
 
-    # apply flattened brainmask:
     if brainmask is not None:
-        grad = grad.flatten()
-        grad = grad[grad > 0]
+        grad = np.ma.masked_array(grad, mask=(brainmask != 1))
 
-    return np.mean(grad ** 2)
+    if reduction == 'mean':
+        return np.mean(grad ** 2)
+    elif reduction == 'worst':
+        grad_slices = np.mean(grad ** 2, axis=(1, 2))
+        return np.min(grad_slices)
+    else:
+        raise ValueError(f"Reduction method {reduction} not supported.")
 
 
-def gradient_entropy(img, brainmask=None):
+def gradient_entropy(img, brainmask=None, reduction='mean'):
     """Gradient Entropy of the input image.
 
     The code is based on the article:
@@ -76,17 +85,23 @@ def gradient_entropy(img, brainmask=None):
         Gradient Entropy of the input image.
     """
 
-    grad = calc_gradient_magnitude(img)  # maybe needs to be normalized
+    grad = calc_gradient_magnitude(img, mode="2d")  # maybe needs to be normalized
 
-    # apply flattened brainmask:
-    if brainmask is not None:
-        grad = grad.flatten()
-        grad = grad[grad > 0]
+    ge_slices = []
+    for sl in range(img.shape[0]):
+        if brainmask is not None:
+            grad_slice = grad[sl][brainmask[sl] == 1]
+        else:
+            grad_slice = grad[sl].flatten()
+        _, counts = np.unique(grad_slice, return_counts=True)
+        ge_slices.append(entropy(counts, base=2))
 
-    _, counts = np.unique(grad, return_counts=True)
-    ge = entropy(counts, base=2)
-
-    return ge
+    if reduction == 'mean':
+        return np.mean(ge_slices)
+    elif reduction == 'worst':
+        return np.max(ge_slices)
+    else:
+        raise ValueError(f"Reduction method {reduction} not supported.")
 
 
 def normalized_gradient_squared(img, brainmask=None):
