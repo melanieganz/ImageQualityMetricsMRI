@@ -16,7 +16,6 @@ from metrics.similarity_metrics import fsim, ssim, psnr
 from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif
 from skimage.metrics import peak_signal_noise_ratio
-git 
 from metrics.gradient_metrics import *
 from metrics.ImageEntropy import imageEntropy
 from metrics.AES import aes
@@ -26,10 +25,10 @@ from metrics.CoEnt import *
 def sort_out_zero_slices(img, ref, brainmask=None):
     """ Only keep non-zero slices in img and ref. """
 
-    zero_slices_img = np.where(np.sum(img, axis=(1, 2)) / img[0].size < 0.1)[0]
+    zero_slices_img = np.where(np.sum(img > 0, axis=(1, 2)) / img[0].size < 0.1)[0]
 
     if ref is not None:
-        zero_slices_ref = np.where(np.sum(ref, axis=(1, 2)) == 0)[0]
+        zero_slices_ref = np.where(np.sum(ref > 0, axis=(1, 2)) / ref[0].size < 0.1)[0]
         zero_slices = np.unique(np.concatenate((zero_slices_img, zero_slices_ref)))
         ref = np.delete(ref, zero_slices, axis=0)
     else:
@@ -153,7 +152,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
         res = np.append(res,metric_value)
 
     for m in metrics_dict["reference_free"]:
-        if m in ["AES", "TG"]:
+        if m in ["AES", "TG", "GE"]:
             if mask_metric_values:
                 metric_value = metrics_dict['reference_free'][m](
                     img, brainmask, reduction=reduction
