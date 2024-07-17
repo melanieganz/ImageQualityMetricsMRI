@@ -1,5 +1,7 @@
 import piq
 import torch
+import numpy as np
+from scipy.stats import entropy
 
 
 def vif(img, img_ref, reduction='mean'):
@@ -41,5 +43,48 @@ def vif(img, img_ref, reduction='mean'):
         return torch.mean(vif_values).item()
     elif reduction == 'worst':
         return torch.min(vif_values).item()
+    else:
+        raise ValueError(f"Reduction method {reduction} not supported.")
+
+
+def image_entropy(img, brainmask=None, reduction='mean'):
+    """
+    Calculate entropy of an image.
+
+    Reference:
+    McGee K, Manduca A, Felmlee J et al. Image metric-based correction
+    (autocorrection) of motion effects: analysis of image metrics. J Magn Reson
+    Imaging. 2000; 11(2):174-181
+
+    Parameters
+    ----------
+    img : numpy array
+        image for which the metrics should be calculated.
+    brainmask : bool, optional
+        Whether the metric values should be masked with the brainmask. If None,
+        no masking is performed.
+    reduction : str, optional
+        Reduction method for the image entropy values of multiple slices.
+        Options: 'mean' (default), 'worst'.
+
+    Returns
+    -------
+    ie : float
+        Image Entropy of the input image.
+    """
+
+    ie_slices = []
+    for sl in range(img.shape[0]):
+        if brainmask is not None:
+            img_slice = img[sl][brainmask[sl] == 1]
+        else:
+            img_slice = img[sl].flatten()
+        _, counts = np.unique(img_slice, return_counts=True)
+        ie_slices.append(entropy(counts, base=2))
+
+    if reduction == 'mean':
+        return np.mean(ie_slices)
+    elif reduction == 'worst':
+        return np.max(ie_slices)
     else:
         raise ValueError(f"Reduction method {reduction} not supported.")

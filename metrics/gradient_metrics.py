@@ -104,13 +104,17 @@ def gradient_entropy(img, brainmask=None, reduction='mean'):
         raise ValueError(f"Reduction method {reduction} not supported.")
 
 
-def normalized_gradient_squared(img, brainmask=None):
+def normalized_gradient_squared(img, brainmask=None, reduction='mean'):
     """Normalized gradient squared measure of the input image.
 
     The code is based on the article:
     McGee K, Manduca A, Felmlee J et al. Image metric-based correction
     (autocorrection) of motion effects: analysis of image metrics. J Magn Reson
     Imaging. 2000; 11(2):174-181.
+
+    Note:
+    - The value of the metric is scaled by the number of pixels in the image
+       to avoid the value being too small.
 
     Parameters
     ----------
@@ -127,12 +131,16 @@ def normalized_gradient_squared(img, brainmask=None):
         Normalized gradient squared measure of the input image.
     """
 
-    grad = calc_gradient_magnitude(img)
+    grad = calc_gradient_magnitude(img, mode="2d")
 
-    # apply brainmask:
     if brainmask is not None:
-        grad = grad.flatten()
-        grad = grad[grad > 0]
+        grad = np.ma.masked_array(grad, mask=(brainmask != 1))
 
-    #FIXME: added a scaling factor here otherwise the value is too small, not sure if it is a good idea? 
-    return np.sum((grad / np.sum(grad)) ** 2) * len(grad)
+    ngs_values = np.sum((grad / np.sum(grad)) ** 2, axis=(1, 2)) * grad[0].size
+
+    if reduction == 'mean':
+        return np.mean(ngs_values)
+    elif reduction == 'worst':
+        return np.min(ngs_values)
+    else:
+        raise ValueError(f"Reduction method {reduction} not supported.")

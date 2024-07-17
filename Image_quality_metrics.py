@@ -14,10 +14,9 @@ warnings.filterwarnings("ignore")
 from data_utils import *
 from metrics.similarity_metrics import fsim, ssim, psnr
 from metrics.perceptual_metrics import lpips
-from metrics.information_metrics import vif
+from metrics.information_metrics import vif, image_entropy
 from skimage.metrics import peak_signal_noise_ratio
 from metrics.gradient_metrics import *
-from metrics.ImageEntropy import imageEntropy
 from metrics.AES import aes
 from metrics.CoEnt import *
 
@@ -86,7 +85,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
             "TG": tenengrad,
             "NGS": normalized_gradient_squared,
             "GE": gradient_entropy,
-            "IE": imageEntropy,
+            "IE": image_entropy,
             "CoEnt": coent
             }
     }
@@ -152,7 +151,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
         res = np.append(res,metric_value)
 
     for m in metrics_dict["reference_free"]:
-        if m in ["AES", "TG", "GE"]:
+        if m in ["AES", "TG", "GE", "NGS", "IE"]:
             if mask_metric_values:
                 metric_value = metrics_dict['reference_free'][m](
                     img, brainmask, reduction=reduction
