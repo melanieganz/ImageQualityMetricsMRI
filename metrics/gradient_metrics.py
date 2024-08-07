@@ -66,7 +66,57 @@ def tenengrad(img, brainmask=None, reduction='mean'):
 
 
 def gradient_entropy(img, brainmask=None, reduction='mean'):
+    """
+    Calculate gradient entropy of an image.
+
+    Reference:
+    Atkinson, D.; Hill, D. L.; Stoyle, P. N.; Summers, P. E.; Keevil, S. F.
+    (1997): Automatic correction of motion artifacts in magnetic resonance
+    images using an entropy focus criterion. In IEEE Transactions on Medical
+    Imaging 16 (6), pp. 903–910. DOI: 10.1109/42.650886.
+
+    Parameters
+    ----------
+    img : numpy array
+        image for which the metrics should be calculated.
+    brainmask : bool, optional
+        Whether the metric values should be masked with the brainmask. If None,
+        no masking is performed.
+    reduction : str, optional
+        Reduction method for the image entropy values of multiple slices.
+        Options: 'mean' (default), 'worst'.
+
+    Returns
+    -------
+    ie : float
+        Image Entropy of the input image.
+    """
+
+    grad = calc_gradient_magnitude(img, mode="2d")
+
+    ge_slices = []
+    for sl in range(img.shape[0]):
+        if brainmask is not None:
+            grad_slice = grad[sl][brainmask[sl] == 1]
+        else:
+            grad_slice = grad[sl].flatten()
+
+        norm_intensity = grad_slice / np.sqrt(np.sum(grad_slice ** 2))
+        ge_slices.append(-np.nansum(norm_intensity * np.log(norm_intensity)))
+
+    if reduction == 'mean':
+        return np.mean(ge_slices)
+    elif reduction == 'worst':
+        return np.max(ge_slices)
+    else:
+        raise ValueError(f"Reduction method {reduction} not supported.")
+
+
+def gradient_entropy_depr(img, brainmask=None, reduction='mean'):
     """Gradient Entropy of the input image.
+
+    DEPRECATED. Uses counts and not the actual image intensities, which
+    does not make sense in this application.
 
     The code is based on the article:
     McGee K, Manduca A, Felmlee J et al. Image metric-based correction
