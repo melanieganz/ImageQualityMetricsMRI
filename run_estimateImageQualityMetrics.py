@@ -88,9 +88,10 @@ for subject_folder in subject_folders:
                                'IE': imq[9]
                                }
                     results_list.append(res_imq)
+
+    # Save results in a csv file
+    results_df = pd.DataFrame(results_list)
+    results_df.to_csv(f"{out_dir}/ImageQualityMetrics.csv",
+                      index=False)
                                                                                                                               
     print(f"Process completed for {subject_folder}")
-    
-# Save results in a csv file
-results_df = pd.DataFrame(results_list)
-results_df.to_csv(f"{out_dir}/ImageQualityMetrics.csv", index=False)

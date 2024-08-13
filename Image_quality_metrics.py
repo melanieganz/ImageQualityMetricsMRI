@@ -31,7 +31,7 @@ def sort_out_zero_slices(img, ref, brainmask=None):
 
     img = np.delete(img, zero_slices, axis=0)
     if brainmask is not None:
-        brainmask = np.delete(brainmask, zero_slices_img, axis=0)
+        brainmask = np.delete(brainmask, zero_slices, axis=0)
 
     return img, ref, brainmask
 
