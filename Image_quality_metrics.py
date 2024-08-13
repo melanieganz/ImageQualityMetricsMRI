@@ -6,8 +6,6 @@ without motion artifacts"
 
 '''
 
-import numpy as np
-import nibabel as nib
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -15,13 +13,12 @@ from data_utils import *
 from metrics.similarity_metrics import fsim, ssim, psnr
 from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif, image_entropy
-from skimage.metrics import peak_signal_noise_ratio
 from metrics.gradient_metrics import *
-from metrics.CoEnt import *
+from archive.CoEnt import *
 
 
 def sort_out_zero_slices(img, ref, brainmask=None):
-    """ Only keep non-zero slices in img and ref. """
+    """ Only keep slices with more than 10% non-zero values in img and ref. """
 
     zero_slices_img = np.where(np.sum(img > 0, axis=(1, 2)) / img[0].size < 0.1)[0]
 
@@ -84,8 +81,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
             "TG": tenengrad,
             "NGS": normalized_gradient_squared,
             "GE": gradient_entropy,
-            "IE": image_entropy,
-            "CoEnt": coent
+            "IE": image_entropy
             }
     }
 
@@ -150,17 +146,14 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
         res = np.append(res,metric_value)
 
     for m in metrics_dict["reference_free"]:
-        if m in ["AES", "TG", "GE", "NGS", "IE"]:
-            if mask_metric_values:
-                metric_value = metrics_dict['reference_free'][m](
-                    img, brainmask, reduction=reduction
-                )
-            else:
-                metric_value = metrics_dict['reference_free'][m](
-                    img, reduction=reduction
-                )
+        if mask_metric_values:
+            metric_value = metrics_dict['reference_free'][m](
+                img, brainmask, reduction=reduction
+            )
         else:
-            metric_value = metrics_dict['reference_free'][m](img)
+            metric_value = metrics_dict['reference_free'][m](
+                img, reduction=reduction
+            )
 
         print(f"{m}: {metric_value}")
         res = np.append(res,metric_value)

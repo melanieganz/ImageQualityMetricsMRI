@@ -2,7 +2,7 @@ import os
 import nibabel as nib
 import numpy as np
 import pandas as pd
-
+import datetime
 import subprocess
 from os import listdir
 from os.path import join
@@ -10,6 +10,9 @@ from os.path import join
 from Image_quality_metrics import compute_metrics
 
 data_dir = "OpenNeuro_dataset"
+out_dir = "Results/OpenNeuro/"
+out_dir = out_dir + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M/")
+os.makedirs(out_dir, exist_ok=True)
 
 # Function to find all reference images in a directory for given sequences
 def find_reference_images(directory, seq):
@@ -71,19 +74,18 @@ for subject_folder in subject_folders:
                                           mask_metric_values=True,
                                           reduction="worst")
                     
-                    res_imq = {'Sbj':subject_folder,
+                    res_imq = {'Sbj': subject_folder,
                                'File': filename,
-                               'SSIM':imq[0],
-                               'PSNR':imq[1],
-                               'FSIM':imq[2],
-                               'VIF':imq[3],
-                               'LPIPS':imq[4],
-                               'AES':imq[5],
-                               'TG':imq[6],
-                               'NGS':imq[7],
-                               'GE':imq[8],
-                               'IE':imq[9],
-                               'CoEnt':imq[10],
+                               'SSIM': imq[0],
+                               'PSNR': imq[1],
+                               'FSIM': imq[2],
+                               'VIF': imq[3],
+                               'LPIPS': imq[4],
+                               'AES': imq[5],
+                               'TG': imq[6],
+                               'NGS': imq[7],
+                               'GE': imq[8],
+                               'IE': imq[9]
                                }
                     results_list.append(res_imq)
                                                                                                                               
@@ -91,4 +93,4 @@ for subject_folder in subject_folders:
     
 # Save results in a csv file
 results_df = pd.DataFrame(results_list)
-results_df.to_csv("ImageQualityMetrics.csv", index=False)
+results_df.to_csv(f"{out_dir}/ImageQualityMetrics.csv", index=False)
