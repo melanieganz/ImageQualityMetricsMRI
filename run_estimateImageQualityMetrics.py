@@ -1,4 +1,6 @@
 import os
+import shutil
+
 import nibabel as nib
 import numpy as np
 import pandas as pd
@@ -9,6 +11,7 @@ from os.path import join
 
 from Image_quality_metrics import compute_metrics
 
+debug = False
 data_dir = "OpenNeuro_dataset"
 out_dir = "Results/OpenNeuro/"
 out_dir = out_dir + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M/")
@@ -68,30 +71,41 @@ for subject_folder in subject_folders:
                     print(f"Reference is {ref_image}")       
                     
                     # run metric calculation
-                    imq = compute_metrics(input_image,
-                                          brainmask_file=seq_bet_mask,
-                                          ref_file=ref_image, normal=True,
-                                          mask_metric_values=True,
-                                          reduction="worst")
-                    
-                    res_imq = {'Sbj': subject_folder,
-                               'File': filename,
-                               'SSIM': imq[0],
-                               'PSNR': imq[1],
-                               'FSIM': imq[2],
-                               'VIF': imq[3],
-                               'LPIPS': imq[4],
-                               'AES': imq[5],
-                               'TG': imq[6],
-                               'NGS': imq[7],
-                               'GE': imq[8],
-                               'IE': imq[9]
-                               }
-                    results_list.append(res_imq)
+                    if debug:
+                        imq = compute_metrics(input_image,
+                                              subject_folder,
+                                              f"{out_dir}/ImageQualityMetrics.csv",
+                                              brainmask_file=seq_bet_mask,
+                                              ref_file=ref_image, normal=True,
+                                              mask_metric_values=True,
+                                              reduction="worst")
+                    else:
+                        shutil.copyfile("helper_run_calculation.sh",
+                                    "tmp_helper_run_calculation.sh")
+                        command = (
+                            'python -u Image_quality_metrics.py '
+                            f'{input_image} {subject_folder} {out_dir}/'
+                            f'ImageQualityMetrics.csv '
+                            f'{seq_bet_mask} {ref_image} --normal True '
+                            f'--mask_metric_values True '
+                            '--reduction worst'
+                        )
+                        command = (
+                            'python -u Image_quality_metrics.py {} {} {}'
+                            '/ImageQualityMetrics.csv {} {} --normal True '
+                            '--mask_metric_values True --reduction worst'
+                        ).format(
+                            input_image,
+                            subject_folder,
+                            out_dir,
+                            seq_bet_mask,
+                            ref_image
+                        )
+                        with open("tmp_helper_run_calculation.sh", "a") as file:
+                            file.write("\n" + command + "\n")
 
-    # Save results in a csv file
-    results_df = pd.DataFrame(results_list)
-    results_df.to_csv(f"{out_dir}/ImageQualityMetrics.csv",
-                      index=False)
-                                                                                                                              
+                        subprocess.run("bash tmp_helper_run_calculation.sh",
+                                       shell=True)
+                        os.remove("tmp_helper_run_calculation.sh")
+
     print(f"Process completed for {subject_folder}")

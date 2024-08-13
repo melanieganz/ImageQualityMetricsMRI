@@ -8,7 +8,8 @@ without motion artifacts"
 
 import warnings
 warnings.filterwarnings("ignore")
-
+import os
+import argparse
 from data_utils import *
 from metrics.similarity_metrics import fsim, ssim, psnr
 from metrics.perceptual_metrics import lpips
@@ -36,8 +37,9 @@ def sort_out_zero_slices(img, ref, brainmask=None):
     return img, ref, brainmask
 
 
-def compute_metrics(filename, brainmask_file=False, ref_file=False,
-                    normal=True, mask_metric_values=False, reduction='worst'):
+def compute_metrics(filename, subject, output_file, brainmask_file=False,
+                    ref_file=False, normal=True, mask_metric_values=False,
+                    reduction='worst'):
     """
     Calculate metrics for a given image.
 
@@ -45,6 +47,10 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     ----------
     filename : str
         filename of the nifti image which is supposed to be evaluated.
+    subject : str
+        subject identifier.
+    output_file : str
+        filename for the output csv file.
     brainmask_file : str, optional.
         filename for the corresponding brainmask. If it is set to False, the
         metric will be calculated on the whole image.The default is False.
@@ -65,6 +71,7 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
     -------
     res : float
         value of the metric.
+        :param subject:
 
     """
     
@@ -158,5 +165,46 @@ def compute_metrics(filename, brainmask_file=False, ref_file=False,
         print(f"{m}: {metric_value}")
         res = np.append(res,metric_value)
 
+    if not os.path.exists(output_file):
+        with open(output_file, 'a') as f:
+            f.write("Sbj,File,"
+                    + ",".join( metrics_dict["full_reference"].keys())
+                    + "," + ",".join(metrics_dict["reference_free"].keys())
+                    + "\n"
+                    )
+
+    with open(output_file, 'a') as f:
+        f.write(f"{subject},{os.path.basename(filename)}," + ",".join(map(str, res)) + "\n")
+
     return res
 
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Compute image quality metrics.")
+    parser.add_argument("filename", type=str,
+                        help="Filename of the nifti image to be evaluated.")
+    parser.add_argument("subject", type=str,
+                        help="Subject identifier.")
+    parser.add_argument("output_file", type=str,
+                        help="Filename for the output CSV file.")
+    parser.add_argument("brainmask_file", type=str, nargs='?',
+                        default=False,
+                        help="Filename for the corresponding brainmask (optional).")
+    parser.add_argument("ref_file", type=str, nargs='?',
+                        default=False,
+                        help="Filename for the reference nifti scan (optional).")
+    parser.add_argument("--normal", type=bool, default=True,
+                        help="Whether to normalize the data before metric "
+                             "calculation (default: True).")
+    parser.add_argument("--mask_metric_values", type=bool,
+                        default=False,
+                        help="Whether to use the brainmask to mask the metric "
+                             "values (default: False).")
+    parser.add_argument("--reduction", type=str, default='worst',
+                        help="Reduction method for the metric calculation "
+                             "(default: 'worst').")
+    args = parser.parse_args()
+
+    compute_metrics(args.filename, args.subject, args.output_file,
+                    args.brainmask_file, args.ref_file, args.normal,
+                    args.mask_metric_values, args.reduction)
