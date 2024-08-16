@@ -8,6 +8,7 @@ import datetime
 import subprocess
 from os import listdir
 from os.path import join
+from match_metrics_scores import process_csv
 
 from Image_quality_metrics import compute_metrics
 
@@ -109,3 +110,10 @@ for subject_folder in subject_folders:
                         os.remove("tmp_helper_run_calculation.sh")
 
     print(f"Process completed for {subject_folder}")
+
+print("All subjects processed. Now matching observer scores...")
+input_csv = f"{out_dir}/ImageQualityMetrics.csv"
+output_csv = f"{out_dir}/ImageQualityMetricsScores.csv"
+in_dir = "./observer_scores/"
+process_csv(input_csv, output_csv, in_dir)
+print("Process completed.")
