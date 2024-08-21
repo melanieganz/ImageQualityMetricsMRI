@@ -3,6 +3,17 @@ import glob
 import numpy as np
 import nibabel as nib
 import subprocess
+import os
+
+
+def find_reference_images(directory, seq):
+    reference_images = None
+
+    for filename in os.listdir(directory):
+        if (seq.lower() in filename.lower() and filename.endswith(".nii")
+                and "run-01" in filename and "pmcoff" in filename):
+            reference_images = os.path.join(directory, filename)
+    return reference_images
 
 
 def load_data(subject_folder, acq, rec, run):
@@ -14,6 +25,26 @@ def load_data(subject_folder, acq, rec, run):
     )[0]
 
     return nib.load(filename).get_fdata().astype(np.uint16)
+
+
+def sort_out_zero_slices(img, ref, brainmask=None):
+    """ Only keep slices with more than 10% non-zero values in img and ref. """
+
+    zero_slices_img = np.where(np.sum(img > 0, axis=(1, 2)) / img[0].size < 0.1)[0]
+
+    if ref is not None:
+        zero_slices_ref = np.where(np.sum(ref > 0, axis=(1, 2)) / ref[0].size < 0.1)[0]
+        zero_slices = np.unique(np.concatenate((zero_slices_img, zero_slices_ref)))
+        ref = np.delete(ref, zero_slices, axis=0)
+    else:
+        zero_slices = zero_slices_img
+
+    img = np.delete(img, zero_slices, axis=0)
+    if brainmask is not None:
+        brainmask = np.delete(brainmask, zero_slices, axis=0)
+
+    return img, ref, brainmask
+
 
 def min_max_scale(img):
     """ Rescale image between [0,1] using the min/max method """

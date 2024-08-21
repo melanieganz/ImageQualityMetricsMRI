@@ -1,11 +1,3 @@
-
-'''
-Code used for the analysis of the ISMRM 2022 abstract "Evaluating the match 
-of image quality metrics with radiological assessment in a dataset with and 
-without motion artifacts" 
-
-'''
-
 import warnings
 warnings.filterwarnings("ignore")
 import os
@@ -16,25 +8,6 @@ from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif, image_entropy
 from metrics.gradient_metrics import *
 from archive.CoEnt import *
-
-
-def sort_out_zero_slices(img, ref, brainmask=None):
-    """ Only keep slices with more than 10% non-zero values in img and ref. """
-
-    zero_slices_img = np.where(np.sum(img > 0, axis=(1, 2)) / img[0].size < 0.1)[0]
-
-    if ref is not None:
-        zero_slices_ref = np.where(np.sum(ref > 0, axis=(1, 2)) / ref[0].size < 0.1)[0]
-        zero_slices = np.unique(np.concatenate((zero_slices_img, zero_slices_ref)))
-        ref = np.delete(ref, zero_slices, axis=0)
-    else:
-        zero_slices = zero_slices_img
-
-    img = np.delete(img, zero_slices, axis=0)
-    if brainmask is not None:
-        brainmask = np.delete(brainmask, zero_slices, axis=0)
-
-    return img, ref, brainmask
 
 
 def compute_metrics(filename, subject, output_file, brainmask_file=False,

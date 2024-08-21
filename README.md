@@ -30,3 +30,14 @@ conda activate dev_iqm
 conda activate dev_iqm
 nohup python -u preprocessingData.py > preprocess_data.log &
 ```
+
+2. Calculate the image quality metrics for all subjects with:
+```
+conda activate dev_iqm
+nohup python -u process_all_subjects.py > Results/log.txt &
+```
+
+3. Match the calculated image quality metrics with the observer scores with the script `match_metrics_scores.py`.
+
+4. Analyse the correlation between the image quality metrics and the observer
+scores with the script `correlation_analysis.py`.

@@ -1,33 +1,27 @@
+"""
+Script to estimate image quality metrics.
+
+Run this script with:
+nohup python -u process_all_subjects.py > Results/log_24_08_21.txt &
+"""
+
 import os
 import shutil
-
-import nibabel as nib
-import numpy as np
-import pandas as pd
 import datetime
 import subprocess
-from os import listdir
-from os.path import join
 from match_metrics_scores import process_csv
-
-from Image_quality_metrics import compute_metrics
+from compute_metrics import compute_metrics
+from data_utils import find_reference_images
 
 debug = False
 data_dir = "OpenNeuro_dataset"
 out_dir = "Results/OpenNeuro/"
+normalisation = True
+mask_metric_values = True
+reduction = "mean"
+
 out_dir = out_dir + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M/")
 os.makedirs(out_dir, exist_ok=True)
-
-# Function to find all reference images in a directory for given sequences
-def find_reference_images(directory, seq):
-    reference_images = None 
-    
-    for filename in os.listdir(directory):
-        if (seq.lower() in filename.lower() and filename.endswith(".nii")
-                and "run-01" in filename and "pmcoff" in filename):
-            reference_images=os.path.join(directory, filename)
-    return reference_images
-
 
 # Define the sequences to look for in file names
 sequences = ["mprage", "t1tirm", "t2tse", "flair"]
@@ -77,30 +71,25 @@ for subject_folder in subject_folders:
                                               subject_folder,
                                               f"{out_dir}/ImageQualityMetrics.csv",
                                               brainmask_file=seq_bet_mask,
-                                              ref_file=ref_image, normal=True,
-                                              mask_metric_values=True,
-                                              reduction="worst")
+                                              ref_file=ref_image, normal=normalisation,
+                                              mask_metric_values=mask_metric_values,
+                                              reduction=reduction)
                     else:
                         shutil.copyfile("helper_run_calculation.sh",
                                     "tmp_helper_run_calculation.sh")
                         command = (
-                            'python -u Image_quality_metrics.py '
-                            f'{input_image} {subject_folder} {out_dir}/'
-                            f'ImageQualityMetrics.csv '
-                            f'{seq_bet_mask} {ref_image} --normal True '
-                            f'--mask_metric_values True '
-                            '--reduction worst'
-                        )
-                        command = (
-                            'python -u Image_quality_metrics.py {} {} {}'
-                            '/ImageQualityMetrics.csv {} {} --normal True '
-                            '--mask_metric_values True --reduction worst'
+                            'python -u compute_metrics.py {} {} {}'
+                            '/ImageQualityMetrics.csv {} {} --normal {} '
+                            '--mask_metric_values {} --reduction {}'
                         ).format(
                             input_image,
                             subject_folder,
                             out_dir,
                             seq_bet_mask,
-                            ref_image
+                            ref_image,
+                            normalisation,
+                            mask_metric_values,
+                            reduction
                         )
                         with open("tmp_helper_run_calculation.sh", "a") as file:
                             file.write("\n" + command + "\n")
