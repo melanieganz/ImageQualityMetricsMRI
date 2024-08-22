@@ -112,51 +112,6 @@ def gradient_entropy(img, brainmask=None, reduction='mean'):
         raise ValueError(f"Reduction method {reduction} not supported.")
 
 
-def gradient_entropy_depr(img, brainmask=None, reduction='mean'):
-    """Gradient Entropy of the input image.
-
-    DEPRECATED. Uses counts and not the actual image intensities, which
-    does not make sense in this application.
-
-    The code is based on the article:
-    McGee K, Manduca A, Felmlee J et al. Image metric-based correction
-    (autocorrection) of motion effects: analysis of image metrics. J Magn Reson
-    Imaging. 2000; 11(2):174-181.
-
-    Parameters
-    ----------
-    img : numpy array
-        image for which the metrics should be calculated.
-    brainmask : boolean True or False, optional
-        If True, a brainmask was used to mask the images before 
-        calculating the metrics. Image is flattened prior metric 
-        estimation. The default is False.
-
-    Returns
-    -------
-    ge : float
-        Gradient Entropy of the input image.
-    """
-
-    grad = calc_gradient_magnitude(img, mode="2d")  # maybe needs to be normalized
-
-    ge_slices = []
-    for sl in range(img.shape[0]):
-        if brainmask is not None:
-            grad_slice = grad[sl][brainmask[sl] == 1]
-        else:
-            grad_slice = grad[sl].flatten()
-        _, counts = np.unique(grad_slice, return_counts=True)
-        ge_slices.append(entropy(counts, base=2))
-
-    if reduction == 'mean':
-        return np.mean(ge_slices)
-    elif reduction == 'worst':
-        return np.max(ge_slices)
-    else:
-        raise ValueError(f"Reduction method {reduction} not supported.")
-
-
 def normalized_gradient_squared(img, brainmask=None, reduction='mean'):
     """Normalized gradient squared measure of the input image.
 
