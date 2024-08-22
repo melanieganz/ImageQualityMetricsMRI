@@ -63,13 +63,12 @@ def psnr(img, img_ref, reduction='mean', brainmask=None, data_range=1.0):
         - The final metric value is calculated as mean or min over all slices.
     """
 
-    img, img_ref = img.astype(np.float64), img_ref.astype(np.float64)
     mse = (img - img_ref) ** 2
+    if brainmask is not None:
+        mse = np.ma.masked_array(mse, mask=(brainmask != 1))
+    mse = np.mean(mse, axis=(1, 2))
 
     psnr_values = 10 * np.log10(data_range**2 / mse)
-    if brainmask is not None:
-        psnr_values = np.ma.masked_array(psnr_values, mask=(brainmask != 1))
-    psnr_values = np.mean(psnr_values, axis=(1, 2))
 
     if reduction == 'mean':
         return np.mean(psnr_values)

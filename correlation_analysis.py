@@ -120,13 +120,13 @@ def plot_correlation_heatmap(spearman_corr, original_metrics_order):
 def plot_scatter_plots(metrics, observer_scores, original_metrics_order):
     types = list(metrics.keys())
     for sequence in metrics[types[0]].keys():
-        fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(20, 15))
+        fig, axes = plt.subplots(nrows=2, ncols=5, figsize=(25, 10))
 
         i = 0
         for type in types:
             for metric in original_metrics_order[type]:
-                row = i // 4
-                col = i % 4
+                row = i // 5
+                col = i % 5
                 ax = axes[row, col]
                 x = metrics[type][sequence][metric]
                 y = observer_scores[type][sequence]["Combined"]
@@ -142,9 +142,9 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order):
                 i += 1
 
         # Hide any unused subplots
-        for j in range(i, 12):
-            row = j // 4
-            col = j % 4
+        for j in range(i, 10):
+            row = j // 5
+            col = j % 5
             fig.delaxes(axes[row, col])
 
         plt.suptitle(f'Scatter Plots of Metrics vs. Combined Observer Scores '
@@ -160,7 +160,7 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-08-13_16-45/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-08-22_08-55/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()
