@@ -19,7 +19,7 @@ out_dir = "Results/OpenNeuro/"
 normalisation = "min_max"
 mask_metric_values = False
 reduction = "worst"
-apply_brainmask = True
+apply_brainmask = False
 
 if normalisation == "mean_std":
     print("mean_std normalisation is not applicable to all metrics.")
@@ -71,7 +71,7 @@ for subject_folder in subject_folders:
                             seq_bet_mask = os.path.join(seq_folder,
                                                         f"align_{seq}_mask.nii.gz")
                     else:
-                        seq_bet_mask = None
+                        seq_bet_mask = "none"
             
                     input_image = os.path.join(seq_folder, filename)
                     print(f"Input image is {input_image}")   

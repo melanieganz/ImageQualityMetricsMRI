@@ -10,7 +10,7 @@ from metrics.gradient_metrics import *
 from archive.CoEnt import *
 
 
-def compute_metrics(filename, subject, output_file, brainmask_file=None,
+def compute_metrics(filename, subject, output_file, brainmask_file="none",
                     ref_file=False, normal="min_max", mask_metric_values=False,
                     reduction='worst'):
     """
@@ -69,7 +69,7 @@ def compute_metrics(filename, subject, output_file, brainmask_file=None,
     # Load data, brainmask and reference:
     img = nib.load(filename).get_fdata().astype(np.uint16)
     
-    if brainmask_file:
+    if brainmask_file != "none":
         brainmask = nib.load(brainmask_file).get_fdata().astype(np.uint16)
     else:
         brainmask = None
@@ -87,7 +87,7 @@ def compute_metrics(filename, subject, output_file, brainmask_file=None,
                      else None)
 
     # Apply brainmask if available:
-    if brainmask_file:
+    if brainmask:
         img_masked = np.multiply(img, brainmask)
         ref_masked = (np.multiply(ref, brainmask) if ref is not None else None)
     else:
