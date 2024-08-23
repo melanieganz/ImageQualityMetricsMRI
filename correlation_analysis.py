@@ -1,3 +1,5 @@
+import os.path
+import csv
 import numpy as np
 import argparse
 from scipy.stats import spearmanr
@@ -83,7 +85,8 @@ def load_metrics_scores(input_csv):
     return subjects, acquisition, metrics, observer_scores
 
 
-def plot_correlation_heatmap(spearman_corr, original_metrics_order):
+def plot_correlation_heatmap(spearman_corr, original_metrics_order,
+                             out_folder=None):
     # Filter correlations with p-value < 0.05
     filtered_corr = {
         seq: {metric: data["corr"] for metric, data in metrics.items()
@@ -114,10 +117,13 @@ def plot_correlation_heatmap(spearman_corr, original_metrics_order):
                  fontsize=16)
     ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
     ax.set_xticklabels(ax.get_xticklabels(), fontsize=12)
+    if out_folder is not None:
+        plt.savefig(f'{out_folder}/correlation_heatmap.png', dpi=200)
     plt.show()
 
 
-def plot_scatter_plots(metrics, observer_scores, original_metrics_order):
+def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
+                       out_folder=None):
     types = list(metrics.keys())
     for sequence in metrics[types[0]].keys():
         fig, axes = plt.subplots(nrows=2, ncols=5, figsize=(25, 10))
@@ -150,6 +156,8 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order):
         plt.suptitle(f'Scatter Plots of Metrics vs. Combined Observer Scores '
                      f'for {sequence}', fontsize=18)
         plt.tight_layout()
+        if out_folder is not None:
+            plt.savefig(f'{out_folder}/scatter_plots_{sequence}.png', dpi=200)
         plt.show()
 
 
@@ -160,11 +168,12 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-08-22_08-55/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-08-22_15-38/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()
     subjects, acquisition, metrics, observer_scores = load_metrics_scores(args.input_csv)
+    out_dir = os.path.dirname(args.input_csv)
 
     # Combine observer scores with double weighting for neuroradiologist
     for type in observer_scores.keys():
@@ -193,9 +202,25 @@ def main():
         "full_ref": ["SSIM", "PSNR", "FSIM", "VIF", "LPIPS"],
         "ref_free": ["AES", "TG", "NGS", "GE", "IE"]
     }
-    plot_correlation_heatmap(spearman_corr, original_metrics_order)
+    plot_correlation_heatmap(spearman_corr, original_metrics_order, out_dir)
 
-    # print mean correlation coefficient for each metric over all sequences
+
+    with open(f"{out_dir}/correlation_coefficients.csv", "w",
+              newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(
+            ["Sequence", "Metric", "Correlation Coefficient", "P-Value"])
+        for seq in observer_scores["full_ref"].keys():
+            for metric in original_metrics_order["full_ref"]:
+                writer.writerow(
+                    [seq, metric, spearman_corr[seq][metric]["corr"],
+                     spearman_corr[seq][metric]["p_val"]])
+            for metric in original_metrics_order["ref_free"]:
+                writer.writerow(
+                    [seq, metric, spearman_corr[seq][metric]["corr"],
+                     spearman_corr[seq][metric]["p_val"]])
+
+
     for type in original_metrics_order.keys():
         for metric in original_metrics_order[type]:
             if all([spearman_corr[seq][metric]["p_val"] < 0.05
@@ -204,7 +229,7 @@ def main():
                                      for seq in observer_scores["full_ref"].keys()])
                 print(f"Mean correlation coefficient for {metric}: {mean_corr}")
 
-    plot_scatter_plots(metrics, observer_scores, original_metrics_order)
+    plot_scatter_plots(metrics, observer_scores, original_metrics_order, out_dir)
 
 
 if __name__ == "__main__":

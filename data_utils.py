@@ -54,7 +54,7 @@ def min_max_scale(img):
     return img_scale
 
 
-def normalize(img):
+def normalize_mean_std(img):
     """ Normalization to mean=0, std=1 """
     mean_img = np.mean(img)
     std_img = np.std(img)

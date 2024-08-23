@@ -10,8 +10,8 @@ from metrics.gradient_metrics import *
 from archive.CoEnt import *
 
 
-def compute_metrics(filename, subject, output_file, brainmask_file=False,
-                    ref_file=False, normal=True, mask_metric_values=False,
+def compute_metrics(filename, subject, output_file, brainmask_file=None,
+                    ref_file=False, normal="min_max", mask_metric_values=False,
                     reduction='worst'):
     """
     Calculate metrics for a given image.
@@ -25,15 +25,16 @@ def compute_metrics(filename, subject, output_file, brainmask_file=False,
     output_file : str
         filename for the output csv file.
     brainmask_file : str, optional.
-        filename for the corresponding brainmask. If it is set to False, the
-        metric will be calculated on the whole image.The default is False.
+        filename for the corresponding brainmask. If it is set to None, the
+        metric will be calculated on the whole image.The default is None.
     ref_file : str, optional
         filename for the reference nifti scan which the image is supposed to
         be compared to. This is only needed for SSIM and PSNR. The default is
         False.
-    normal : bool, optional
-        whether the data should be normalized before metric calculation. The
-        default is True.
+    normal : str, optional
+        whether and how the data should be normalized before metric calculation.
+        The default is min_max normalisation. Other options: "mean_std" or "none".
+        Note: mean_std normalisation is not applicable to all metrics.
     mask_metric_values : bool, optional
         whether the brainmask should be multiplied to the images (False) or
         used to mask the metric values (True). Only applicable to some metrics.
@@ -99,12 +100,20 @@ def compute_metrics(filename, subject, output_file, brainmask_file=False,
                                                              brainmask)
 
     # Normalization:
-    if normal:
+    if normal == "min_max":
         img = min_max_scale(img_masked)
         ref = (min_max_scale(ref_masked) if ref is not None else None)
-    else:
+    elif normal == "mean_std":
+        img = normalize_mean_std(img_masked)
+        ref = (normalize_mean_std(ref_masked) if ref is not None else None)
+        metrics_dict["full_reference"].pop("FSIM")
+        metrics_dict["full_reference"].pop("VIF")
+        metrics_dict["full_reference"].pop("LPIPS")
+    elif normal == "none":
         img = img_masked
         ref = ref_masked
+    else:
+        raise ValueError("Normalisation method not recognized.")
     
     res = []
     for m in metrics_dict["full_reference"]:
@@ -166,7 +175,7 @@ if __name__ == "__main__":
     parser.add_argument("ref_file", type=str, nargs='?',
                         default=False,
                         help="Filename for the reference nifti scan (optional).")
-    parser.add_argument("--normal", type=bool, default=True,
+    parser.add_argument("--normal", type=str, default=True,
                         help="Whether to normalize the data before metric "
                              "calculation (default: True).")
     parser.add_argument("--mask_metric_values", type=bool,

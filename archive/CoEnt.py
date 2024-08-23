@@ -11,7 +11,7 @@ Maxim Zaitsev, Karl Young, Gerald Matson, and Norbert Schuff'''
 
 import numpy as np
 from skimage.feature.texture import graycomatrix # for >= v0.19
-from data_utils import bin_img, crop_img, normalize
+from data_utils import bin_img, crop_img, normalize_mean_std
 
 
 def coent3d(img, n_levels = 128, bin = True, crop = True, supress_zero = True):
@@ -59,7 +59,7 @@ def coent3d(img, n_levels = 128, bin = True, crop = True, supress_zero = True):
         ivol = img[i,:,:]
         
         # Normalize
-        ivol_n = 255 * (normalize(ivol))
+        ivol_n = 255 * (normalize_mean_std(ivol))
         
         ivol = ivol_n.astype(np.uint8)
         
@@ -88,7 +88,7 @@ def coent3d(img, n_levels = 128, bin = True, crop = True, supress_zero = True):
     for j in range(vol_shape[1]):
         ivol = img[:,j,:]
         
-        ivol_n = 255 * (normalize(ivol))
+        ivol_n = 255 * (normalize_mean_std(ivol))
         
         ivol = ivol_n.astype(np.uint8)
         
@@ -150,7 +150,7 @@ def coent2d(img, n_levels = 128, bin = True, crop = True, supress_zero = True):
         ivol = img[:,:,slice]
         
         # Normalize
-        ivol_n = 255 * (normalize(ivol))
+        ivol_n = 255 * (normalize_mean_std(ivol))
         
         ivol = ivol_n.astype(np.uint8)
         

@@ -16,12 +16,22 @@ from data_utils import find_reference_images
 debug = False
 data_dir = "OpenNeuro_dataset"
 out_dir = "Results/OpenNeuro/"
-normalisation = True
-mask_metric_values = True
-reduction = "mean"
+normalisation = "min_max"
+mask_metric_values = False
+reduction = "worst"
+apply_brainmask = True
+
+if normalisation == "mean_std":
+    print("mean_std normalisation is not applicable to all metrics.")
 
 out_dir = out_dir + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M/")
 os.makedirs(out_dir, exist_ok=True)
+
+with open(f"{out_dir}/settings.txt", "w") as file:
+    file.write(f"Normalisation: {normalisation}\n")
+    file.write(f"Apply brainmask: {apply_brainmask}\n")
+    file.write(f"Mask metric values: {mask_metric_values}\n")
+    file.write(f"Reduction: {reduction}\n")
 
 # Define the sequences to look for in file names
 sequences = ["mprage", "t1tirm", "t2tse", "flair"]
@@ -53,12 +63,15 @@ for subject_folder in subject_folders:
                         and "mask" not in filename and "bet" not in filename):
                     
                     # Get the mask file
-                    if seq =="mprage":
-                        seq_bet_mask = os.path.join(seq_folder,
-                                                    f"bet_{seq}_mask.nii.gz")
+                    if apply_brainmask:
+                        if seq =="mprage":
+                            seq_bet_mask = os.path.join(seq_folder,
+                                                        f"bet_{seq}_mask.nii.gz")
+                        else:
+                            seq_bet_mask = os.path.join(seq_folder,
+                                                        f"align_{seq}_mask.nii.gz")
                     else:
-                        seq_bet_mask = os.path.join(seq_folder,
-                                                    f"align_{seq}_mask.nii.gz")
+                        seq_bet_mask = None
             
                     input_image = os.path.join(seq_folder, filename)
                     print(f"Input image is {input_image}")   
