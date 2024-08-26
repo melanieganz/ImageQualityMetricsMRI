@@ -87,7 +87,7 @@ def compute_metrics(filename, subject, output_file, brainmask_file="none",
                      else None)
 
     # Apply brainmask if available:
-    if brainmask:
+    if brainmask is not None:
         img_masked = np.multiply(img, brainmask)
         ref_masked = (np.multiply(ref, brainmask) if ref is not None else None)
     else:
