@@ -112,6 +112,9 @@ def compute_metrics(filename, subject, output_file, brainmask_file="none",
     elif normal == "none":
         img = img_masked
         ref = ref_masked
+        metrics_dict["full_reference"].pop("FSIM")
+        metrics_dict["full_reference"].pop("VIF")
+        metrics_dict["full_reference"].pop("LPIPS")
     else:
         raise ValueError("Normalisation method not recognized.")
     
