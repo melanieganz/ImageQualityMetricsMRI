@@ -58,7 +58,10 @@ def load_metrics_scores(input_csv):
 
         for metric in full_reference_metrics:
             if metric not in header:
-                raise ValueError(f"No {metric} column found in the CSV file.")
+                if i == 0:
+                    print(f"No {metric} column found in the CSV file.")
+                metrics["full_ref"][sequence][metric].append(None)
+                continue
             if is_reference:
                 continue
             metrics["full_ref"][sequence][metric].append(
@@ -66,7 +69,10 @@ def load_metrics_scores(input_csv):
             )
         for metric in reference_free_metrics:
             if metric not in header:
-                raise ValueError(f"No {metric} column found in the CSV file.")
+                if i == 0:
+                    print(f"No {metric} column found in the CSV file.")
+                metrics["ref_free"][sequence][metric].append(None)
+                continue
             metrics["ref_free"][sequence][metric].append(
                 data[np.where(header == metric)[0][0], i+1].astype(float)
             )
@@ -135,16 +141,17 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
                 col = i % 5
                 ax = axes[row, col]
                 x = metrics[type][sequence][metric]
-                y = observer_scores[type][sequence]["Combined"]
-                ax.scatter(x, y, alpha=0.7)
-                ax.set_xlabel(f'{metric}', fontsize=16)
-                ax.set_ylabel('Combined Observer Scores', fontsize=16)
-                ax.grid(True)
+                if not any(element is None for element in x):
+                    y = observer_scores[type][sequence]["Combined"]
+                    ax.scatter(x, y, alpha=0.7)
+                    ax.set_xlabel(f'{metric}', fontsize=16)
+                    ax.set_ylabel('Combined Observer Scores', fontsize=16)
+                    ax.grid(True)
 
-                # Calculate and plot regression line
-                if len(x) > 1 and len(y) > 1:
-                    slope, intercept = np.polyfit(x, y, 1)
-                    ax.plot(x, slope * np.array(x) + intercept, color='tab:green')
+                    # Calculate and plot regression line
+                    if len(x) > 1 and len(y) > 1:
+                        slope, intercept = np.polyfit(x, y, 1)
+                        ax.plot(x, slope * np.array(x) + intercept, color='tab:green')
                 i += 1
 
         # Hide any unused subplots
@@ -168,7 +175,7 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-08-22_15-38/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-08-26_09-16/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()
@@ -193,8 +200,11 @@ def main():
             spearman_corr.setdefault(sequence, {})
             for metric in metrics[type][sequence].keys():
                 spearman_corr[sequence][metric] = {}
-                sp_corr, p_val = spearmanr(metrics[type][sequence][metric],
-                                           observer_scores[type][sequence]["Combined"])
+                if any(element is None for element in metrics[type][sequence][metric]):
+                    sp_corr, p_val = (np.nan, np.nan)
+                else:
+                    sp_corr, p_val = spearmanr(metrics[type][sequence][metric],
+                                               observer_scores[type][sequence]["Combined"])
                 spearman_corr[sequence][metric]["corr"] = sp_corr
                 spearman_corr[sequence][metric]["p_val"] = p_val
 
