@@ -181,15 +181,21 @@ if __name__ == "__main__":
     parser.add_argument("--normal", type=str, default=True,
                         help="Whether to normalize the data before metric "
                              "calculation (default: True).")
-    parser.add_argument("--mask_metric_values", type=bool,
-                        default=False,
+    parser.add_argument("--mask_metric_values", type=str,
+                        default="False",
                         help="Whether to use the brainmask to mask the metric "
                              "values (default: False).")
     parser.add_argument("--reduction", type=str, default='worst',
                         help="Reduction method for the metric calculation "
                              "(default: 'worst').")
     args = parser.parse_args()
+    if args.mask_metric_values == "True":
+        mask_metric_values = True
+    elif args.mask_metric_values == "False":
+        mask_metric_values = False
+    else:
+        raise ValueError("mask_metric_values must be either 'True' or 'False'.")
 
     compute_metrics(args.filename, args.subject, args.output_file,
                     args.brainmask_file, args.ref_file, args.normal,
-                    args.mask_metric_values, args.reduction)
+                    mask_metric_values, args.reduction)

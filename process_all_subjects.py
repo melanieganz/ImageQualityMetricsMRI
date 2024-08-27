@@ -16,8 +16,8 @@ from data_utils import find_reference_images
 debug = False
 data_dir = "OpenNeuro_dataset"
 out_dir = "Results/OpenNeuro/"
-normalisation = "none"
-mask_metric_values = True
+normalisation = "min_max"
+mask_metric_values = False
 reduction = "worst"
 apply_brainmask = True
 
