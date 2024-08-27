@@ -19,12 +19,13 @@ out_dir = "Results/OpenNeuro/"
 normalisation = "min_max"
 mask_metric_values = False
 reduction = "worst"
-apply_brainmask = True
+apply_brainmask = False
 
 if normalisation == "mean_std":
     print("mean_std normalisation is not applicable to all metrics.")
 
-out_dir = out_dir + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M/")
+date_stamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+out_dir = out_dir + date_stamp
 os.makedirs(out_dir, exist_ok=True)
 
 with open(f"{out_dir}/settings.txt", "w") as file:
@@ -89,7 +90,7 @@ for subject_folder in subject_folders:
                                               reduction=reduction)
                     else:
                         shutil.copyfile("helper_run_calculation.sh",
-                                    "tmp_helper_run_calculation.sh")
+                                    f"tmp_helper_run_calculation_{date_stamp}.sh")
                         command = (
                             'python -u compute_metrics.py {} {} {}'
                             '/ImageQualityMetrics.csv {} {} --normal {} '
@@ -104,12 +105,14 @@ for subject_folder in subject_folders:
                             mask_metric_values,
                             reduction
                         )
-                        with open("tmp_helper_run_calculation.sh", "a") as file:
+                        with open(f"tmp_helper_run_calculation_{date_stamp}.sh",
+                                  "a") as file:
                             file.write("\n" + command + "\n")
 
-                        subprocess.run("bash tmp_helper_run_calculation.sh",
+                        subprocess.run(f"bash tmp_helper_run_"
+                                       f"calculation_{date_stamp}.sh",
                                        shell=True)
-                        os.remove("tmp_helper_run_calculation.sh")
+                        os.remove(f"tmp_helper_run_calculation_{date_stamp}.sh")
 
     print(f"Process completed for {subject_folder}")
 

@@ -31,13 +31,14 @@ def lpips(img, img_ref, reduction='mean'):
         perceptual metric (lpips) between the two images.
     """
 
-    loss_fn_vgg = LPIPS(net='vgg')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    loss_fn_vgg = LPIPS(net='vgg').to(device)
 
     # change range of images to [-1, 1] and add RGB channel dimension
     img = torch.from_numpy(img[:, None]).float() * 2 - 1
     img_ref = torch.from_numpy(img_ref[:, None]).float() * 2 - 1
-    img = img.repeat(1, 3, 1, 1)
-    img_ref = img_ref.repeat(1, 3, 1, 1)
+    img = img.repeat(1, 3, 1, 1).to(device)
+    img_ref = img_ref.repeat(1, 3, 1, 1).to(device)
 
     loss_vgg =  loss_fn_vgg(img, img_ref)
 
