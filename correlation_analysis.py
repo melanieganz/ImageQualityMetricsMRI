@@ -116,7 +116,7 @@ def plot_correlation_heatmap(spearman_corr, original_metrics_order,
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
     sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap="coolwarm",
                 xticklabels=metrics, yticklabels=sequences, ax=ax, square=True,
-                cbar_kws={"shrink": 0.5})
+                cbar_kws={"shrink": 0.5}, vmin=-1, vmax=1)
     ax.set_xlabel('Metrics', fontsize=14)
     ax.set_ylabel('Sequences', fontsize=14)
     ax.set_title('Spearman Correlation Coefficients (p-value < 0.05)',
@@ -175,7 +175,7 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-08-26_09-16/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-08-22_08-55/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()

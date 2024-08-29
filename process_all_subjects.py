@@ -17,9 +17,9 @@ debug = False
 data_dir = "OpenNeuro_dataset"
 out_dir = "Results/OpenNeuro/"
 normalisation = "min_max"
-mask_metric_values = False
+mask_metric_values = True
 reduction = "worst"
-apply_brainmask = False
+apply_brainmask = True
 
 if normalisation == "mean_std":
     print("mean_std normalisation is not applicable to all metrics.")
