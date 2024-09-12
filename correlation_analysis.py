@@ -11,7 +11,7 @@ def load_metrics_scores(input_csv):
     full_reference_metrics = ["SSIM", "PSNR", "FSIM", "VIF", "LPIPS"]
     reference_free_metrics = ["AES", "TG", "NGS", "GE", "IE"]
     observer_scores_to_include = ["Radiographer1", "Radiographer2",
-                                  "Neuroradiologist"]
+                                  "Radiologist1", "Radiologist2"]
     sequences = ["mprage", "t1tirm", "flair", "t2tse"]
 
     metrics = {"full_ref": {s : {m: [] for m in full_reference_metrics}
@@ -175,7 +175,7 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-08-22_08-55/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-08-28_07-33/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()
@@ -188,8 +188,10 @@ def main():
             observer_scores[type][sequence]["Combined"] = np.mean(
                 [observer_scores[type][sequence]["Radiographer1"],
                  observer_scores[type][sequence]["Radiographer2"],
-                 observer_scores[type][sequence]["Neuroradiologist"],
-                 observer_scores[type][sequence]["Neuroradiologist"]],
+                 observer_scores[type][sequence]["Radiologist1"],
+                 observer_scores[type][sequence]["Radiologist1"],
+                 observer_scores[type][sequence]["Radiologist2"],
+                 observer_scores[type][sequence]["Radiologist2"]],
                 axis=0
             )
 
