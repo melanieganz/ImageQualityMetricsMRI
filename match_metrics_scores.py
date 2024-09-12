@@ -3,34 +3,11 @@ import csv
 
 # Mapping of sequence types to their respective score files
 sequence_to_file = {
-    'mprage': 'T1_MPR Score.txt',
-    't1tirm': 'T1_TIRM Score.txt',
-    'flair': 'T2_FLAIR Score.txt',
-    't2tse': 'T2_TSE Score.txt'
+    'mprage': 'T1_MPR_scores.csv',
+    't1tirm': 'T1_TIRM_scores.csv',
+    'flair': 'T2_FLAIR_scores.csv',
+    't2tse': 'T2_TSE_scores.csv'
 }
-
-
-def match_acq_descr(filename):
-
-    if "ref" in filename:
-        tag = "MOCO_OFF_STILL_"
-    else:
-        if "pmcoff" in filename:
-            tag = "MOCO_OFF_"
-        elif "pmcon" in filename:
-            tag = "MOCO_ON_"
-        else:
-            tag = "N/A"
-        if "run-01" in filename:
-            tag += "STILL_"
-        elif "run-02" in filename:
-            tag += "NOD_"
-        elif "run-03" in filename:
-            tag += "SHAKE_"
-        if "rec-wre" in filename:
-            tag += "RR_"
-
-    return tag
 
 
 # Function to parse the observer scores from the respective text file
@@ -39,16 +16,13 @@ def get_observer_scores(subject_id, sequence, in_dir, filename):
     if not sequence_file:
         return None
 
-    tag = match_acq_descr(filename)
-
     with open(sequence_file, 'r') as file:
-        for line in file:
-            if line.startswith('#'):
-                continue  # Skip header lines
-            parts = line.split()
-            if parts[0] == subject_id.replace('sub-', 'Subject_'):
-                if parts[1] == tag:
-                    return parts[2:5]  # Return the three scores
+        reader = csv.reader(file)
+        next(reader)  # Skip header
+        for row in reader:
+            if row[0] == subject_id:
+                if row[1] in filename:
+                    return row[2:]
 
 
 # Function to determine the sequence type from the filename
@@ -85,7 +59,9 @@ def process_csv(input_csv, output_csv, in_dir):
     # Output results to a new CSV file
     with open(output_csv, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(header[0].split(',') + ['Radiographer1', 'Radiographer2', 'Neuroradiologist'])
+        writer.writerow(header[0].split(',') + ['Radiographer1',
+                                                'Radiographer2', 'Radiologist1',
+                                                'Radiologist2'])
         writer.writerows(results)
 
     print(f"Processed data has been saved to {output_csv}")
@@ -96,12 +72,12 @@ def main():
         description='Process CSV files to gather observer scores.')
     parser.add_argument(
         '--input_csv', help='Path to the input CSV file',
-        default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/OpenNeuro/2024-08-13_16-45/"
+        default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/OpenNeuro/2024-08-28_08-19_test/"
                 "ImageQualityMetrics.csv"
     )
     parser.add_argument(
         '--output_csv', help='Path to the output CSV file',
-        default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/OpenNeuro/2024-08-13_16-45/"
+        default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/OpenNeuro/2024-08-28_08-19_test/"
                 "ImageQualityMetricsScores.csv"
     )
     parser.add_argument(
