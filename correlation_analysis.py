@@ -175,7 +175,7 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-08-28_07-33/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-09-19_11-57/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()

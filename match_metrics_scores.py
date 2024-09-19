@@ -72,12 +72,12 @@ def main():
         description='Process CSV files to gather observer scores.')
     parser.add_argument(
         '--input_csv', help='Path to the input CSV file',
-        default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/OpenNeuro/2024-08-28_08-19_test/"
+        default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/OpenNeuro/2024-09-19_11-57/"
                 "ImageQualityMetrics.csv"
     )
     parser.add_argument(
         '--output_csv', help='Path to the output CSV file',
-        default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/OpenNeuro/2024-08-28_08-19_test/"
+        default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/OpenNeuro/2024-09-19_11-57/"
                 "ImageQualityMetricsScores.csv"
     )
     parser.add_argument(

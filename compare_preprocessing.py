@@ -57,11 +57,12 @@ def main():
         # "worst": "./Results/OpenNeuro/2024-08-28_08-19/",
         # "mean": "./Results/OpenNeuro/2024-08-22_08-55/",
         "None": "./Results/OpenNeuro/2024-08-27_16-52/",
-        "min_max": "./Results/OpenNeuro/2024-08-28_08-19/",
-        "mean_std": "./Results/OpenNeuro/2024-08-27_15-21/",
+        "Mask": "./Results/OpenNeuro/2024-08-28_08-19/",
+        "Multiply": "./Results/OpenNeuro/2024-08-27_15-21/",
         # "None": "./Results/OpenNeuro/2024-08-28_07-33/",
         # "min_max": "./Results/OpenNeuro/2024-08-28_08-19/",
         # "mean_std": "./Results/OpenNeuro/2024-08-28_07-31/",
+        # "percentile": "./Results/OpenNeuro/2024-09-19_11-57/",
     }
 
     correlation_data = read_correlation_coefficients(out_dirs)
