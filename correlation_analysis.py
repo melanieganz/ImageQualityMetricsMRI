@@ -5,6 +5,7 @@ import argparse
 from scipy.stats import spearmanr
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.colors as mcolors
 
 
 def load_metrics_scores(input_csv):
@@ -93,6 +94,14 @@ def load_metrics_scores(input_csv):
 
 def plot_correlation_heatmap(spearman_corr, original_metrics_order,
                              out_folder=None):
+    # setting the colormap to be grey between -0.6 and 0.6
+    coolwarm = plt.get_cmap('coolwarm')
+    red_part = coolwarm(np.linspace(0.6, 1, 128))
+    blue_part = coolwarm(np.linspace(0, 0.4, 128))
+    grey = np.full((384, 4), 0.95)
+    colors = np.vstack([blue_part, grey, red_part])
+    cmap = mcolors.LinearSegmentedColormap.from_list('cmap', colors)
+
     # Filter correlations with p-value < 0.05
     filtered_corr = {
         seq: {metric: data["corr"] for metric, data in metrics.items()
@@ -114,7 +123,7 @@ def plot_correlation_heatmap(spearman_corr, original_metrics_order,
     fig_height = len(sequences) * 1.5
 
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
-    sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap="coolwarm",
+    sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
                 xticklabels=metrics, yticklabels=sequences, ax=ax, square=True,
                 cbar_kws={"shrink": 0.5}, vmin=-1, vmax=1)
     ax.set_xlabel('Metrics', fontsize=14)

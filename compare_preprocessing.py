@@ -3,6 +3,7 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.colors as mcolors
 
 def read_correlation_coefficients(out_dirs):
     correlation_data = {}
@@ -25,6 +26,14 @@ def read_correlation_coefficients(out_dirs):
     return correlation_data
 
 def plot_comparison_heatmaps(correlation_data, out_dirs):
+    # setting the colormap to be grey between -0.6 and 0.6
+    coolwarm = plt.get_cmap('coolwarm')
+    red_part = coolwarm(np.linspace(0.6, 1, 128))
+    blue_part = coolwarm(np.linspace(0, 0.4, 128))
+    grey = np.full((384, 4), 0.95)
+    colors = np.vstack([blue_part, grey, red_part])
+    cmap = mcolors.LinearSegmentedColormap.from_list('cmap', colors)
+
     sequences = list(correlation_data.keys())
     metrics = list(next(iter(correlation_data.values())).keys())
     settings = list(out_dirs.keys())
@@ -41,7 +50,7 @@ def plot_comparison_heatmaps(correlation_data, out_dirs):
                     mask[i, j] = False
 
         fig, ax = plt.subplots(figsize=(len(metrics) * 1.5, len(settings) * 1.5))
-        sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap="coolwarm",
+        sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
                     xticklabels=metrics, yticklabels=settings, ax=ax, square=True,
                     cbar_kws={"shrink": 0.5}, vmin=-1, vmax=1, mask=mask)
         ax.set_xlabel('Metrics', fontsize=14)
@@ -56,13 +65,13 @@ def main():
     out_dirs = {
         # "worst": "./Results/OpenNeuro/2024-08-28_08-19/",
         # "mean": "./Results/OpenNeuro/2024-08-22_08-55/",
-        "None": "./Results/OpenNeuro/2024-08-27_16-52/",
-        "Mask": "./Results/OpenNeuro/2024-08-28_08-19/",
-        "Multiply": "./Results/OpenNeuro/2024-08-27_15-21/",
-        # "None": "./Results/OpenNeuro/2024-08-28_07-33/",
-        # "min_max": "./Results/OpenNeuro/2024-08-28_08-19/",
-        # "mean_std": "./Results/OpenNeuro/2024-08-28_07-31/",
-        # "percentile": "./Results/OpenNeuro/2024-09-19_11-57/",
+        # "None": "./Results/OpenNeuro/2024-08-27_16-52/",
+        # "Mask": "./Results/OpenNeuro/2024-08-28_08-19/",
+        # "Multiply": "./Results/OpenNeuro/2024-08-27_15-21/",
+        "None": "./Results/OpenNeuro/2024-08-28_07-33/",
+        "min_max": "./Results/OpenNeuro/2024-08-28_08-19/",
+        "mean_std": "./Results/OpenNeuro/2024-08-28_07-31/",
+        "percentile": "./Results/OpenNeuro/2024-09-19_11-57/",
     }
 
     correlation_data = read_correlation_coefficients(out_dirs)
