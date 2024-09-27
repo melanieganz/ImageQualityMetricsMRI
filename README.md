@@ -36,8 +36,9 @@ nohup python -u preprocessingData.py > preprocess_data.log &
 conda activate dev_iqm
 nohup python -u process_all_subjects.py > Results/log.txt &
 ```
-You can set specific preprocessing settings for `normalisation`, 
-`mask_metric_values`, `reduction`, `apply_brainmask` in lines 19-22.
+One can set specific preprocessing settings for `normalisation`, 
+`mask_metric_values`, `reduction`, `apply_brainmask` as input arguments. 
+`run_process_all_subjects.sh`is a bash script to run different settings sequentially.g
 
 3. Analyse the correlation between the image quality metrics and the observer
 scores with the script `correlation_analysis.py`.

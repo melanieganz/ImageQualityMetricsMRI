@@ -9,6 +9,7 @@ import os
 import shutil
 import datetime
 import subprocess
+import argparse
 from match_metrics_scores import process_csv
 from compute_metrics import compute_metrics
 from data_utils import find_reference_images
@@ -16,10 +17,24 @@ from data_utils import find_reference_images
 debug = False
 data_dir = "OpenNeuro_dataset"
 out_dir = "Results/OpenNeuro/"
-normalisation = "percentile"
-mask_metric_values = True
-reduction = "worst"
-apply_brainmask = True
+
+parser = argparse.ArgumentParser(description="Process all subjects to estimate "
+                                             "image quality metrics.")
+parser.add_argument("--normalisation", type=str,
+                    default="percentile",
+                    help="Normalisation method (default: 'percentile').")
+parser.add_argument("--mask_metric_values", type=bool,
+                    default=True, help="Whether to mask metric values (default: True).")
+parser.add_argument("--reduction", type=str, default="worst",
+                    help="Reduction method for metric calculation (default: 'worst').")
+parser.add_argument("--apply_brainmask", type=bool,
+                    default=True, help="Whether to apply brainmask (default: True).")
+args = parser.parse_args()
+
+normalisation = args.normalisation
+mask_metric_values = args.mask_metric_values
+reduction = args.reduction
+apply_brainmask = args.apply_brainmask
 
 if normalisation == "mean_std":
     print("mean_std normalisation is not applicable to all metrics.")
