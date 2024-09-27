@@ -61,6 +61,16 @@ def normalize_mean_std(img):
     img_norm = (img-mean_img)/std_img
     return img_norm
 
+def normalize_percentile(img, lower_percentile=1, upper_percentile=99.9, clip=True):
+    """ Normalization to the lower and upper percentiles """
+    img = img.astype(np.float32)
+    lower = np.percentile(img, lower_percentile)
+    upper = np.percentile(img, upper_percentile)
+    img = (img - lower) / (upper - lower)
+    if clip:
+        img = np.clip(img, 0, 1)
+    return img
+
 def crop_img(img):
     '''
     Parameters
