@@ -50,28 +50,50 @@ def plot_comparison_heatmaps(correlation_data, out_dirs):
                     mask[i, j] = False
 
         fig, ax = plt.subplots(figsize=(len(metrics) * 1.5, len(settings) * 1.5))
-        sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
-                    xticklabels=metrics, yticklabels=settings, ax=ax, square=True,
-                    cbar_kws={"shrink": 0.5}, vmin=-1, vmax=1, mask=mask)
-        ax.set_xlabel('Metrics', fontsize=14)
-        ax.set_ylabel('Preprocessing Settings', fontsize=14)
+        heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
+                              xticklabels=metrics, yticklabels=settings, ax=ax,
+                              square=True, cbar_kws={"shrink": 0.8}, vmin=-1,
+                              vmax=1, mask=mask)
+        ax.set_xlabel('Metrics', fontsize=18)
+        ax.set_ylabel('Preprocessing Settings', fontsize=18)
         ax.set_title(f'Comparison of Correlation Coefficients for {sequence}',
-                     fontsize=16)
-        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
-        ax.set_xticklabels(ax.get_xticklabels(), fontsize=12)
+                     fontsize=18)
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=18)
+        ax.set_xticklabels(ax.get_xticklabels(), fontsize=18)
+        for text in heatmap.texts:
+            text.set_size(16)
+        cbar = heatmap.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=16)
+        cbar.set_label('$\\rho$', fontsize=16, rotation=0)
+        plt.show()
+
+        # without title etc. for the paper:
+        fig, ax = plt.subplots(figsize=(len(metrics) * 1.5, len(settings) * 1.6))
+        heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
+                    xticklabels=metrics, yticklabels=settings, ax=ax, square=True,
+                    cbar=False, vmin=-1, vmax=1, mask=mask)
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=20)
+        ax.set_xticklabels(ax.get_xticklabels(), fontsize=20)
+
+        for text in heatmap.texts:
+            text.set_size(18)
+        plt.subplots_adjust(left=0.11, right=0.95, top=0.9, bottom=0.1)
         plt.show()
 
 def main():
     out_dirs = {
-        # "worst": "./Results/OpenNeuro/2024-08-28_08-19/",
-        # "mean": "./Results/OpenNeuro/2024-08-22_08-55/",
-        # "None": "./Results/OpenNeuro/2024-08-27_16-52/",
-        # "Mask": "./Results/OpenNeuro/2024-08-28_08-19/",
-        # "Multiply": "./Results/OpenNeuro/2024-08-27_15-21/",
-        "None": "./Results/OpenNeuro/2024-08-28_07-33/",
-        "min_max": "./Results/OpenNeuro/2024-08-28_08-19/",
-        "mean_std": "./Results/OpenNeuro/2024-08-28_07-31/",
-        "percentile": "./Results/OpenNeuro/2024-09-19_11-57/",
+        # Reduction:
+        "Worst": "./Results/OpenNeuro/2024-09-27_12-35/", #baseline
+        "Mean": "./Results/OpenNeuro/2024-09-27_16-25/",
+        # Brain mask:
+        # "Mask": "./Results/OpenNeuro/2024-09-27_12-35/",  #baseline
+        # "Multiply": "./Results/OpenNeuro/2024-09-30_09-21/",  ####
+        # "None": "./Results/OpenNeuro/2024-09-30_10-39/",  ###
+        # Normalisation
+        # "Percentile": "./Results/OpenNeuro/2024-09-27_12-35/",  # baseline
+        # "Min-Max": "./Results/OpenNeuro/2024-09-27_20-44/",
+        # "Mean-Std": "./Results/OpenNeuro/2024-09-27_22-12/",
+        # "None": "./Results/OpenNeuro/2024-09-27_23-08/",
     }
 
     correlation_data = read_correlation_coefficients(out_dirs)

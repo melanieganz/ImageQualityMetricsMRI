@@ -9,6 +9,9 @@ now=$(date +"%y_%m_%d")
 
 cd /home/iml/hannah.eichhorn/Code/_OWN_PUBLIC_REPS/ImageQualityMetricsMRI/
 
+nohup python -u process_all_subjects.py --normalisation "percentile" --mask_metric_values True --reduction "worst" --apply_brainmask True > Results/log_"$now"_baseline.txt &
+wait
+
 nohup python -u process_all_subjects.py --normalisation "percentile" --mask_metric_values True --reduction "mean" --apply_brainmask True > Results/log_"$now"_reduction-mean.txt &
 wait
 

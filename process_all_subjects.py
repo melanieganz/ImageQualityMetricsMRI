@@ -18,16 +18,28 @@ debug = False
 data_dir = "OpenNeuro_dataset"
 out_dir = "Results/OpenNeuro/"
 
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 parser = argparse.ArgumentParser(description="Process all subjects to estimate "
                                              "image quality metrics.")
 parser.add_argument("--normalisation", type=str,
                     default="percentile",
                     help="Normalisation method (default: 'percentile').")
-parser.add_argument("--mask_metric_values", type=bool,
+parser.add_argument("--mask_metric_values", type=str2bool,
                     default=True, help="Whether to mask metric values (default: True).")
 parser.add_argument("--reduction", type=str, default="worst",
                     help="Reduction method for metric calculation (default: 'worst').")
-parser.add_argument("--apply_brainmask", type=bool,
+parser.add_argument("--apply_brainmask", type=str2bool,
                     default=True, help="Whether to apply brainmask (default: True).")
 args = parser.parse_args()
 

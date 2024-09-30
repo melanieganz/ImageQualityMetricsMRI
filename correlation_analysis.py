@@ -110,6 +110,8 @@ def plot_correlation_heatmap(spearman_corr, original_metrics_order,
     }
 
     # Create a matrix for the heatmap
+    sequ_dict = {"mprage": "MPRAGE", "t1tirm": "TIRM", "flair": "FLAIR",
+                   "t2tse": "TSE"}
     sequences = list(filtered_corr.keys())
     metrics = [metric for key in original_metrics_order
                for metric in original_metrics_order[key]]
@@ -123,15 +125,23 @@ def plot_correlation_heatmap(spearman_corr, original_metrics_order,
     fig_height = len(sequences) * 1.5
 
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
-    sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
-                xticklabels=metrics, yticklabels=sequences, ax=ax, square=True,
-                cbar_kws={"shrink": 0.5}, vmin=-1, vmax=1)
-    ax.set_xlabel('Metrics', fontsize=14)
-    ax.set_ylabel('Sequences', fontsize=14)
-    ax.set_title('Spearman Correlation Coefficients (p-value < 0.05)',
-                 fontsize=16)
-    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
-    ax.set_xticklabels(ax.get_xticklabels(), fontsize=12)
+    heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
+                          xticklabels=metrics,
+                          yticklabels=[sequ_dict[sequ] for sequ in sequences],
+                          ax=ax, square=True,
+                cbar_kws={"shrink": 0.8}, vmin=-1, vmax=1)
+    # ax.set_xlabel('Metrics', fontsize=20)
+    # ax.set_ylabel('Sequences', fontsize=20)
+    # ax.set_title('Spearman Correlation Coefficients (p-value < 0.05)',
+    #              fontsize=20)
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=20)
+    ax.set_xticklabels(ax.get_xticklabels(), fontsize=20)
+    for text in heatmap.texts:
+        text.set_size(18)
+    cbar = heatmap.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=18)
+    cbar.set_label('$\\rho$', fontsize=18, rotation=0)
+    plt.tight_layout()
     if out_folder is not None:
         plt.savefig(f'{out_folder}/correlation_heatmap.png', dpi=200)
     plt.show()
@@ -153,8 +163,8 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
                 if not any(element is None for element in x):
                     y = observer_scores[type][sequence]["Combined"]
                     ax.scatter(x, y, alpha=0.7)
-                    ax.set_xlabel(f'{metric}', fontsize=16)
-                    ax.set_ylabel('Combined Observer Scores', fontsize=16)
+                    ax.set_xlabel(f'{metric}', fontsize=20)
+                    ax.set_ylabel('Observer Scores', fontsize=20)
                     ax.grid(True)
 
                     # Calculate and plot regression line
@@ -169,8 +179,8 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
             col = j % 5
             fig.delaxes(axes[row, col])
 
-        plt.suptitle(f'Scatter Plots of Metrics vs. Combined Observer Scores '
-                     f'for {sequence}', fontsize=18)
+        # plt.suptitle(f'Scatter Plots of Metrics vs. Observer Scores '
+        #              f'for {sequence}', fontsize=18)
         plt.tight_layout()
         if out_folder is not None:
             plt.savefig(f'{out_folder}/scatter_plots_{sequence}.png', dpi=200)
@@ -184,7 +194,7 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-09-19_11-57/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-09-27_12-35/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()
