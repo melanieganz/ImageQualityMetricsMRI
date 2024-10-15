@@ -15,8 +15,8 @@ from compute_metrics import compute_metrics
 from data_utils import find_reference_images
 
 debug = False
-data_dir = "OpenNeuro_dataset"
-out_dir = "Results/OpenNeuro/"
+data_dir = "CUBRIC Data/FLIRT/"
+out_dir = "Results/CUBRICdata/"
 
 
 def str2bool(v):
@@ -61,85 +61,69 @@ with open(f"{out_dir}/settings.txt", "w") as file:
     file.write(f"Mask metric values: {mask_metric_values}\n")
     file.write(f"Reduction: {reduction}\n")
 
-# Define the sequences to look for in file names
-sequences = ["mprage", "t1tirm", "t2tse", "flair"]
+
 results_list = []
 
-# Loop through each subject folder (sub-01, sub-02, ..., sub-22)
-subject_folders = sorted(f for f in os.listdir(data_dir) if f.startswith("sub-"))
+# Structure is: main folder (dates) with multiple subfolders (mprage with/without motion)
+subject_folders = sorted(f for f in os.listdir(data_dir))
 for subject_folder in subject_folders:   
-
-    for seq in sequences:
-        seq_folder = os.path.join(data_dir, subject_folder, seq)
+    
+    acquisitions = sorted(f for f in os.listdir(subject_folder))
+    for acq in acquisitions:
+        acq_folder = os.path.join(data_dir, subject_folder, acq)     
         
-        # Find reference for that sequence (if available)
-        ref_folder = os.path.join(data_dir, subject_folder, "anat")
-        ref_temp = find_reference_images(ref_folder, seq)        
-        
-        if ref_temp:
-            print(f"Found reference image for {subject_folder} ({seq}): {ref_temp}")
-            
-            # Command to copy file using copy command on Windows
-            ref_image = os.path.join(seq_folder, f"ref_{seq}_image.nii")
-            command = ['cp', '-f', ref_temp, ref_image]
-            subprocess.run(command, check=True, shell=False)
+        # Each subfolder had the flirt_ref.nii.gz file saved (the same for each acquisition date)
+        ref_image = os.path.join(acq_folder, f"flirt_ref.nii.gz")
 
-            # For each file (reference incuded):
-            for filename in os.listdir(seq_folder):                
-                if (seq.lower() in filename.lower()
-                        and filename.endswith((".nii", ".gz"))
-                        and "mask" not in filename and "bet" not in filename):
-                    
-                    # Get the mask file
-                    if apply_brainmask:
-                        if seq =="mprage":
-                            seq_bet_mask = os.path.join(seq_folder,
-                                                        f"bet_{seq}_mask.nii.gz")
-                        else:
-                            seq_bet_mask = os.path.join(seq_folder,
-                                                        f"align_{seq}_mask.nii.gz")
-                    else:
-                        seq_bet_mask = "none"
+        # For each file (reference incuded):
+        for filename in os.listdir(acq_folder):                    
+            # Get the mask file
+            mask_dir = "CUBRIC Data/mask/{acq}"
+            if apply_brainmask:
+                acq_bet_mask = os.path.join(mask_dir,
+                                                f"align_MPR_mask.nii.gz")
+            else:
+                acq_bet_mask = "none"
+    
+            input_image = os.path.join(acq_folder, filename)
+            print(f"Input image is {input_image}")   
+            print(f"Mask is {acq_bet_mask}")    
+            print(f"Reference is {ref_image}")       
             
-                    input_image = os.path.join(seq_folder, filename)
-                    print(f"Input image is {input_image}")   
-                    print(f"Mask is {seq_bet_mask}")    
-                    print(f"Reference is {ref_image}")       
-                    
-                    # run metric calculation
-                    if debug:
-                        imq = compute_metrics(input_image,
-                                              subject_folder,
-                                              f"{out_dir}/ImageQualityMetrics.csv",
-                                              brainmask_file=seq_bet_mask,
-                                              ref_file=ref_image, normal=normalisation,
-                                              mask_metric_values=mask_metric_values,
-                                              reduction=reduction)
-                    else:
-                        shutil.copyfile("helper_run_calculation.sh",
-                                    f"tmp_helper_run_calculation_{date_stamp}.sh")
-                        command = (
-                            'python -u compute_metrics.py {} {} {}'
-                            '/ImageQualityMetrics.csv {} {} --normal {} '
-                            '--mask_metric_values {} --reduction {}'
-                        ).format(
-                            input_image,
-                            subject_folder,
-                            out_dir,
-                            seq_bet_mask,
-                            ref_image,
-                            normalisation,
-                            mask_metric_values,
-                            reduction
-                        )
-                        with open(f"tmp_helper_run_calculation_{date_stamp}.sh",
-                                  "a") as file:
-                            file.write("\n" + command + "\n")
+            # run metric calculation
+            if debug:
+                imq = compute_metrics(input_image,
+                                        subject_folder,
+                                        f"{out_dir}/ImageQualityMetrics.csv",
+                                        brainmask_file=acq_bet_mask,
+                                        ref_file=ref_image, normal=normalisation,
+                                        mask_metric_values=mask_metric_values,
+                                        reduction=reduction)
+            else:
+                shutil.copyfile("helper_run_calculation.sh",
+                            f"tmp_helper_run_calculation_{date_stamp}.sh")
+                command = (
+                    'python -u compute_metrics.py {} {} {}'
+                    '/ImageQualityMetrics.csv {} {} --normal {} '
+                    '--mask_metric_values {} --reduction {}'
+                ).format(
+                    input_image,
+                    subject_folder,
+                    out_dir,
+                    acq_bet_mask,
+                    ref_image,
+                    normalisation,
+                    mask_metric_values,
+                    reduction
+                )
+                with open(f"tmp_helper_run_calculation_{date_stamp}.sh",
+                            "a") as file:
+                    file.write("\n" + command + "\n")
 
-                        subprocess.run(f"bash tmp_helper_run_"
-                                       f"calculation_{date_stamp}.sh",
-                                       shell=True)
-                        os.remove(f"tmp_helper_run_calculation_{date_stamp}.sh")
+                subprocess.run(f"bash tmp_helper_run_"
+                                f"calculation_{date_stamp}.sh",
+                                shell=True)
+                os.remove(f"tmp_helper_run_calculation_{date_stamp}.sh")
 
     print(f"Process completed for {subject_folder}")
 
