@@ -15,7 +15,7 @@ from compute_metrics import compute_metrics
 from data_utils import find_reference_images
 
 debug = False
-data_dir = "CUBRIC Data/FLIRT/"
+data_dir = "~/Library/CloudStorage/OneDrive-NYULangoneHealth/ImageQualityMetrics_ISMRM24/CUBRIC Data/FLIRT/"
 out_dir = "Results/CUBRICdata/"
 
 
