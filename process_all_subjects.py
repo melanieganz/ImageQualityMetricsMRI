@@ -15,7 +15,8 @@ from compute_metrics import compute_metrics
 from data_utils import find_reference_images
 
 debug = False
-data_dir = "~/Library/CloudStorage/OneDrive-NYULangoneHealth/ImageQualityMetrics_ISMRM24/CUBRIC Data/FLIRT/"
+data_dir = "/Users/emarchetto/Library/CloudStorage/OneDrive-NYULangoneHealth/ImageQualityMetrics_ISMRM24/CUBRIC_Data/FLIRT/"
+mask_dir = "/Users/emarchetto/Library/CloudStorage/OneDrive-NYULangoneHealth/ImageQualityMetrics_ISMRM24/CUBRIC_Data/mask/"
 out_dir = "Results/CUBRICdata/"
 
 
@@ -65,10 +66,10 @@ with open(f"{out_dir}/settings.txt", "w") as file:
 results_list = []
 
 # Structure is: main folder (dates) with multiple subfolders (mprage with/without motion)
-subject_folders = sorted(f for f in os.listdir(data_dir))
+subject_folders = sorted(f for f in os.listdir(data_dir) if not f.startswith('.'))
 for subject_folder in subject_folders:   
     
-    acquisitions = sorted(f for f in os.listdir(subject_folder))
+    acquisitions = sorted(f for f in os.listdir(os.path.join(data_dir, subject_folder)) if not f.startswith('.'))
     for acq in acquisitions:
         acq_folder = os.path.join(data_dir, subject_folder, acq)     
         
@@ -78,9 +79,9 @@ for subject_folder in subject_folders:
         # For each file (reference incuded):
         for filename in os.listdir(acq_folder):                    
             # Get the mask file
-            mask_dir = "CUBRIC Data/mask/{acq}"
+            mask_folder = os.path.join(mask_dir,acq)
             if apply_brainmask:
-                acq_bet_mask = os.path.join(mask_dir,
+                acq_bet_mask = os.path.join(mask_folder,
                                                 f"align_MPR_mask.nii.gz")
             else:
                 acq_bet_mask = "none"
