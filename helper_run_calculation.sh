@@ -6,11 +6,17 @@ if [ "$(hostname)" == "PC085765" ]; then
     anaconda_directory="/home/iml/hannah.eichhorn/anaconda3/"
     code_directory="/home/iml/hannah.eichhorn/Code/_OWN_PUBLIC_REPS/ImageQualityMetricsMRI/"
     host_id="bacio"
+
+elif [ "$(hostname)" == "MARCHE06-13MBA.local" ]; then
+    home_directory="/Users/emarchetto/"
+    anaconda_directory="/Users/emarchetto/miniconda3"
+    code_directory="/Users/emarchetto/Documents/PROJECTS/ImageQualityMetricsMRI"
+    host_id="elisatest"
+
 else
     echo "Unknown hostname: $(hostname)"
     exit 1
 fi
-
 
 # activate conda env:
 source $anaconda_directory/bin/activate

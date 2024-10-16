@@ -67,25 +67,25 @@ results_list = []
 
 # Structure is: main folder (dates) with multiple subfolders (mprage with/without motion)
 subject_folders = sorted(f for f in os.listdir(data_dir) if not f.startswith('.'))
-for subject_folder in subject_folders:   
-    
+for subject_folder in subject_folders:      
     acquisitions = sorted(f for f in os.listdir(os.path.join(data_dir, subject_folder)) if not f.startswith('.'))
     for acq in acquisitions:
         acq_folder = os.path.join(data_dir, subject_folder, acq)     
         
         # Each subfolder had the flirt_ref.nii.gz file saved (the same for each acquisition date)
         ref_image = os.path.join(acq_folder, f"flirt_ref.nii.gz")
+        
+        # Get the mask file
+        mask_folder = os.path.join(mask_dir,subject_folder)
 
         # For each file (reference incuded):
         for filename in os.listdir(acq_folder):                    
-            # Get the mask file
-            mask_folder = os.path.join(mask_dir,acq)
             if apply_brainmask:
                 acq_bet_mask = os.path.join(mask_folder,
                                                 f"align_MPR_mask.nii.gz")
             else:
                 acq_bet_mask = "none"
-    
+
             input_image = os.path.join(acq_folder, filename)
             print(f"Input image is {input_image}")   
             print(f"Mask is {acq_bet_mask}")    
@@ -95,6 +95,7 @@ for subject_folder in subject_folders:
             if debug:
                 imq = compute_metrics(input_image,
                                         subject_folder,
+                                        acq,
                                         f"{out_dir}/ImageQualityMetrics.csv",
                                         brainmask_file=acq_bet_mask,
                                         ref_file=ref_image, normal=normalisation,
@@ -126,7 +127,7 @@ for subject_folder in subject_folders:
                                 shell=True)
                 os.remove(f"tmp_helper_run_calculation_{date_stamp}.sh")
 
-    print(f"Process completed for {subject_folder}")
+print(f"Process completed for {subject_folder}")
 
 print("All subjects processed. Now matching observer scores...")
 input_csv = f"{out_dir}/ImageQualityMetrics.csv"

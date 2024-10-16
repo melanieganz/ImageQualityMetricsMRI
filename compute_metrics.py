@@ -10,7 +10,7 @@ from metrics.gradient_metrics import *
 from archive.CoEnt import *
 
 
-def compute_metrics(filename, subject, output_file, brainmask_file="none",
+def compute_metrics(filename, subject, acquisition, output_file, brainmask_file="none",
                     ref_file=False, normal="min_max", mask_metric_values=False,
                     reduction='worst'):
     """
@@ -155,14 +155,14 @@ def compute_metrics(filename, subject, output_file, brainmask_file="none",
 
     if not os.path.exists(output_file):
         with open(output_file, 'a') as f:
-            f.write("Sbj,File,"
+            f.write("Sbj,Acq,File,"
                     + ",".join( metrics_dict["full_reference"].keys())
                     + "," + ",".join(metrics_dict["reference_free"].keys())
                     + "\n"
                     )
 
     with open(output_file, 'a') as f:
-        f.write(f"{subject},{os.path.basename(filename)}," + ",".join(map(str, res)) + "\n")
+        f.write(f"{subject},{acquisition},{os.path.basename(filename)}," + ",".join(map(str, res)) + "\n")
 
     return res
 
