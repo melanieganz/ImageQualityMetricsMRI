@@ -173,6 +173,8 @@ if __name__ == "__main__":
                         help="Filename of the nifti image to be evaluated.")
     parser.add_argument("subject", type=str,
                         help="Subject identifier.")
+    parser.add_argument("acquisition", type=str,
+                        help="Acquisition identifier.")
     parser.add_argument("output_file", type=str,
                         help="Filename for the output CSV file.")
     parser.add_argument("brainmask_file", type=str, nargs='?',
@@ -199,6 +201,6 @@ if __name__ == "__main__":
     else:
         raise ValueError("mask_metric_values must be either 'True' or 'False'.")
 
-    compute_metrics(args.filename, args.subject, args.output_file,
+    compute_metrics(args.filename, args.subject, args.acquisition, args.output_file,
                     args.brainmask_file, args.ref_file, args.normal,
                     mask_metric_values, args.reduction)

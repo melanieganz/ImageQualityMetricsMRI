@@ -105,12 +105,13 @@ for subject_folder in subject_folders:
                 shutil.copyfile("helper_run_calculation.sh",
                             f"tmp_helper_run_calculation_{date_stamp}.sh")
                 command = (
-                    'python -u compute_metrics.py {} {} {}'
+                    'python -u compute_metrics.py {} {} {} {}'
                     '/ImageQualityMetrics.csv {} {} --normal {} '
                     '--mask_metric_values {} --reduction {}'
                 ).format(
                     input_image,
                     subject_folder,
+                    acq,
                     out_dir,
                     acq_bet_mask,
                     ref_image,
