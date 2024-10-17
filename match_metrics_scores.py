@@ -1,5 +1,6 @@
 import argparse
 import csv
+import os
 
 # Mapping of sequence types to their respective score files
 sequence_to_file = {
@@ -65,6 +66,56 @@ def process_csv(input_csv, output_csv, in_dir):
         writer.writerows(results)
 
     print(f"Processed data has been saved to {output_csv}")
+    
+    
+def process_csv_cubric(input_csv, output_csv, scores_csv):       
+    # Load the scores 
+    with open(scores_csv, newline='') as scoresfile:
+        scores_reader = csv.reader(scoresfile)
+        scores_data = list(scores_reader)
+        
+    scores_header = scores_data[0]
+    scores_data = scores_data[1:]
+    
+    with open(input_csv, newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        input_header = next(reader) # skip the header
+    
+        # Prepare to write to output_csv
+        with open(output_csv, mode='w', newline='') as outfile:
+            writer = csv.writer(outfile)
+            
+            # Write the same header from input_csv and add a new column for the score
+            output_header = input_header + ['Score']
+            writer.writerow(output_header)
+            
+            # Process each row in the CSV
+            for row in reader:            
+                first_col = row[0]
+                second_col = row[1]
+                third_col = row[2]
+                
+                score_found = None
+                
+                # Extract the filename without "flirt_" and ".nii.gz"
+                filename = third_col.replace("flirt_", "").replace(".nii.gz", "")
+
+                # Print the match (for debug)
+                print(first_col, second_col, filename)
+                
+                # Search for the corresponding row in scores_data
+                for score_row in scores_data:
+                    if (first_col == score_row[0] and
+                        second_col == score_row[1] and
+                        filename == score_row[2]):
+                        
+                        score_found = score_row[3]
+                        # Print the match (for debug)
+                        print(score_row[0], score_row[1], score_row[2], score_found)
+                        break  # Stop searching after finding the first match
+                    
+                output_row = row + [score_found] if score_found is not None else row + ['Not Found']
+                writer.writerow(output_row)
 
 
 def main():
