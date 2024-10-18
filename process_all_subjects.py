@@ -65,6 +65,8 @@ with open(f"{out_dir}/settings.txt", "w") as file:
 
 results_list = []
 
+print("Process starting...")
+
 # Structure is: main folder (dates) with multiple subfolders (mprage with/without motion)
 subject_folders = sorted(f for f in os.listdir(data_dir) if not f.startswith('.'))
 for subject_folder in subject_folders:   

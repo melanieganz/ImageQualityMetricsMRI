@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # activate conda env:
+source /Users/emarchetto/miniconda3/bin/activate
 conda activate dev_iqm
 
 # store current date in variable

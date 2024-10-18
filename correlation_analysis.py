@@ -208,8 +208,8 @@ def main():
         "full_ref": ["SSIM", "PSNR", "FSIM", "VIF", "LPIPS"],
         "ref_free": ["AES", "TG", "NGS", "GE", "IE"]
     }
+    
     plot_correlation_heatmap(spearman_corr, original_metrics_order, out_dir)
-
     plot_scatter_plots(metrics, observer_scores, original_metrics_order, out_dir)
 
 
