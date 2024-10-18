@@ -67,77 +67,74 @@ results_list = []
 
 # Structure is: main folder (dates) with multiple subfolders (mprage with/without motion)
 subject_folders = sorted(f for f in os.listdir(data_dir) if not f.startswith('.'))
-# for subject_folder in subject_folders:   
-subject_folder = "02-12-2020"
-acquisitions = sorted(f for f in os.listdir(os.path.join(data_dir, subject_folder)) if not f.startswith('.'))
-# for acq in acquisitions:
-acq = "MID00234"
-acq_folder = os.path.join(data_dir, subject_folder, acq)     
-
-# Each subfolder had the flirt_ref.nii.gz file saved (the same for each acquisition date)
-ref_image = os.path.join(acq_folder, f"flirt_ref.nii.gz")
-
-# Get the mask file
-mask_folder = os.path.join(mask_dir,subject_folder)
-
-# # For each file (reference incuded):
-# for filename in os.listdir(acq_folder):                    
-#     if apply_brainmask:
-#         acq_bet_mask = os.path.join(mask_folder,
-#                                         f"align_MPR_mask.nii.gz")
-#     else:
-#         acq_bet_mask = "none"
-
-#     input_image = os.path.join(acq_folder, filename)
-#     print(f"Input image is {input_image}")   
-#     print(f"Mask is {acq_bet_mask}")    
-#     print(f"Reference is {ref_image}")       
+for subject_folder in subject_folders:   
+    acquisitions = sorted(f for f in os.listdir(os.path.join(data_dir, subject_folder)) if not f.startswith('.'))
     
-#     # run metric calculation
-#     if debug:
-#         imq = compute_metrics(input_image,
-#                                 subject_folder,
-#                                 acq,
-#                                 f"{out_dir}/ImageQualityMetrics.csv",
-#                                 brainmask_file=acq_bet_mask,
-#                                 ref_file=ref_image, normal=normalisation,
-#                                 mask_metric_values=mask_metric_values,
-#                                 reduction=reduction)
-#     else:
-#         shutil.copyfile("helper_run_calculation.sh",
-#                     f"tmp_helper_run_calculation_{date_stamp}.sh")
-#         command = (
-#             'python -u compute_metrics.py {} {} {} {}'
-#             '/ImageQualityMetrics.csv {} {} --normal {} '
-#             '--mask_metric_values {} --reduction {}'
-#         ).format(
-#             input_image,
-#             subject_folder,
-#             acq,
-#             out_dir,
-#             acq_bet_mask,
-#             ref_image,
-#             normalisation,
-#             mask_metric_values,
-#             reduction
-#         )
-#         with open(f"tmp_helper_run_calculation_{date_stamp}.sh",
-#                     "a") as file:
-#             file.write("\n" + command + "\n")
+    for acq in acquisitions:
+        acq_folder = os.path.join(data_dir, subject_folder, acq)     
 
-#         subprocess.run(f"bash tmp_helper_run_"
-#                         f"calculation_{date_stamp}.sh",
-#                         shell=True)
-#         os.remove(f"tmp_helper_run_calculation_{date_stamp}.sh")
+        # Each subfolder had the flirt_ref.nii.gz file saved (the same for each acquisition date)
+        ref_image = os.path.join(acq_folder, f"flirt_ref.nii.gz")
 
-# print(f"Process completed for {subject_folder}")
+        # Get the mask file
+        mask_folder = os.path.join(mask_dir,subject_folder)
+
+        # For each file (reference incuded):
+        for filename in os.listdir(acq_folder):                    
+            if apply_brainmask:
+                acq_bet_mask = os.path.join(mask_folder,
+                                                f"align_MPR_mask.nii.gz")
+            else:
+                acq_bet_mask = "none"
+
+            input_image = os.path.join(acq_folder, filename)
+            print(f"Input image is {input_image}")   
+            print(f"Mask is {acq_bet_mask}")    
+            print(f"Reference is {ref_image}")       
+            
+            # run metric calculation
+            if debug:
+                imq = compute_metrics(input_image,
+                                        subject_folder,
+                                        acq,
+                                        f"{out_dir}/ImageQualityMetrics.csv",
+                                        brainmask_file=acq_bet_mask,
+                                        ref_file=ref_image, normal=normalisation,
+                                        mask_metric_values=mask_metric_values,
+                                        reduction=reduction)
+            else:
+                shutil.copyfile("helper_run_calculation.sh",
+                            f"tmp_helper_run_calculation_{date_stamp}.sh")
+                command = (
+                    'python -u compute_metrics.py {} {} {} {}'
+                    '/ImageQualityMetrics.csv {} {} --normal {} '
+                    '--mask_metric_values {} --reduction {}'
+                ).format(
+                    input_image,
+                    subject_folder,
+                    acq,
+                    out_dir,
+                    acq_bet_mask,
+                    ref_image,
+                    normalisation,
+                    mask_metric_values,
+                    reduction
+                )
+                with open(f"tmp_helper_run_calculation_{date_stamp}.sh",
+                            "a") as file:
+                    file.write("\n" + command + "\n")
+
+                subprocess.run(f"bash tmp_helper_run_"
+                                f"calculation_{date_stamp}.sh",
+                                shell=True)
+                os.remove(f"tmp_helper_run_calculation_{date_stamp}.sh")
+
+    print(f"Process completed for {subject_folder}")
 
 print("All subjects processed. Now matching observer scores...")
-# input_csv = f"{out_dir}/ImageQualityMetrics.csv"
-# output_csv = f"{out_dir}/ImageQualityMetricsScores.csv"
 
-input_csv = "./Results/CUBRICdata/2024-10-16_18-03/ImageQualityMetrics.csv"
-output_csv = "./Results/CUBRICdata/2024-10-16_18-03/ImageQualityMetricsScores.csv"
+input_csv = "./Results/CUBRICdata/" + out_dir + "/ImageQualityMetrics.csv"
+output_csv = "./Results/CUBRICdata/" + out_dir + "/ImageQualityMetricsScores.csv"
 scores_csv = "./observer_scores/CUBRIC_scores.csv"
 
 process_csv_cubric(input_csv, output_csv, scores_csv)
