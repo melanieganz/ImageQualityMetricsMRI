@@ -11,7 +11,13 @@ elif [ "$(hostname)" == "MARCHE06-13MBA.lan" ]; then
     home_directory="/Users/emarchetto/"
     anaconda_directory="/Users/emarchetto/miniconda3"
     code_directory="/Users/emarchetto/Documents/PROJECTS/ImageQualityMetricsMRI"
-    host_id="elisatest"
+    host_id="casa"
+
+elif [ "$(hostname)" == "marche06-13mba.wireless.nyumc.org" ]; then
+    home_directory="/Users/emarchetto/"
+    anaconda_directory="/Users/emarchetto/miniconda3"
+    code_directory="/Users/emarchetto/Documents/PROJECTS/ImageQualityMetricsMRI"
+    host_id="ufficio"
 
 else
     echo "Unknown hostname: $(hostname)"

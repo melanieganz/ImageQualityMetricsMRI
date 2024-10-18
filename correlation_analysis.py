@@ -210,20 +210,6 @@ def main():
     }
     plot_correlation_heatmap(spearman_corr, original_metrics_order, out_dir)
 
-    # with open(f"{out_dir}/correlation_coefficients.csv", "w",
-    #           newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(
-    #         ["Metric", "Correlation Coefficient", "P-Value"])
-    #     for metric in original_metrics_order["full_ref"]:
-    #         writer.writerow(
-    #             [metric, spearman_corr[metric]["corr"],
-    #                 spearman_corr[metric]["p_val"]])
-    #     for metric in original_metrics_order["ref_free"]:
-    #         writer.writerow(
-    #             [metric, spearman_corr[metric]["corr"],
-    #                 spearman_corr[metric]["p_val"]])
-
     plot_scatter_plots(metrics, observer_scores, original_metrics_order, out_dir)
 
 
