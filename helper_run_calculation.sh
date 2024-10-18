@@ -7,7 +7,7 @@ if [ "$(hostname)" == "PC085765" ]; then
     code_directory="/home/iml/hannah.eichhorn/Code/_OWN_PUBLIC_REPS/ImageQualityMetricsMRI/"
     host_id="bacio"
 
-elif [ "$(hostname)" == "marche06-13mba.wireless.nyumc.org" ]; then
+elif [ "$(hostname)" == "MARCHE06-13MBA.lan" ]; then
     home_directory="/Users/emarchetto/"
     anaconda_directory="/Users/emarchetto/miniconda3"
     code_directory="/Users/emarchetto/Documents/PROJECTS/ImageQualityMetricsMRI"
