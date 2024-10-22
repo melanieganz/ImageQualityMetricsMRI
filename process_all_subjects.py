@@ -135,8 +135,8 @@ for subject_folder in subject_folders:
 
 print("All subjects processed. Now matching observer scores...")
 
-input_csv = "./Results/CUBRICdata/" + out_dir + "/ImageQualityMetrics.csv"
-output_csv = "./Results/CUBRICdata/" + out_dir + "/ImageQualityMetricsScores.csv"
+input_csv = out_dir + "/ImageQualityMetrics.csv"
+output_csv = out_dir + "/ImageQualityMetricsScores.csv"
 scores_csv = "./observer_scores/CUBRIC_scores.csv"
 
 process_csv_cubric(input_csv, output_csv, scores_csv)
