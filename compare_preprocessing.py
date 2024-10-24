@@ -12,17 +12,14 @@ def read_correlation_coefficients(out_dirs):
         with open(file_path, "r") as file:
             reader = csv.DictReader(file)
             for row in reader:
-                sequence = row["Sequence"]
                 metric = row["Metric"]
                 corr = float(row["Correlation Coefficient"])
                 p_val = float(row["P-Value"])
-                if sequence not in correlation_data:
-                    correlation_data[sequence] = {}
-                if metric not in correlation_data[sequence]:
-                    correlation_data[sequence][metric] = {}
-                if setting not in correlation_data[sequence][metric]:
-                    correlation_data[sequence][metric][setting] = []
-                correlation_data[sequence][metric][setting].append((corr, p_val))
+                if metric not in correlation_data:
+                    correlation_data[metric] = {}
+                if setting not in correlation_data[metric]:
+                    correlation_data[metric][setting] = []
+                correlation_data[metric][setting].append((corr, p_val))
     return correlation_data
 
 def plot_comparison_heatmaps(correlation_data, out_dirs):
@@ -34,66 +31,66 @@ def plot_comparison_heatmaps(correlation_data, out_dirs):
     colors = np.vstack([blue_part, grey, red_part])
     cmap = mcolors.LinearSegmentedColormap.from_list('cmap', colors)
 
-    sequences = list(correlation_data.keys())
-    metrics = list(next(iter(correlation_data.values())).keys())
+    metrics = list(correlation_data.keys())
     settings = list(out_dirs.keys())
 
-    for sequence in sequences:
-        heatmap_data = np.full((len(settings), len(metrics)), np.nan)
-        mask = np.ones_like(heatmap_data, dtype=bool)
-        for i, setting in enumerate(settings):
-            for j, metric in enumerate(metrics):
-                corr_values = correlation_data[sequence][metric][setting]
-                mean_corr = np.mean([corr for corr, p_val in corr_values if p_val < 0.05])
-                if not np.isnan(mean_corr):
-                    heatmap_data[i, j] = mean_corr
-                    mask[i, j] = False
 
-        fig, ax = plt.subplots(figsize=(len(metrics) * 1.5, len(settings) * 1.5))
-        heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
-                              xticklabels=metrics, yticklabels=settings, ax=ax,
-                              square=True, cbar_kws={"shrink": 0.8}, vmin=-1,
-                              vmax=1, mask=mask)
-        ax.set_xlabel('Metrics', fontsize=18)
-        ax.set_ylabel('Preprocessing Settings', fontsize=18)
-        ax.set_title(f'Comparison of Correlation Coefficients for {sequence}',
-                     fontsize=18)
-        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=18)
-        ax.set_xticklabels(ax.get_xticklabels(), fontsize=18)
-        for text in heatmap.texts:
-            text.set_size(16)
-        cbar = heatmap.collections[0].colorbar
-        cbar.ax.tick_params(labelsize=16)
-        cbar.set_label('$\\rho$', fontsize=16, rotation=0)
-        plt.show()
+    heatmap_data = np.full((len(settings), len(metrics)), np.nan)
+    mask = np.ones_like(heatmap_data, dtype=bool)
+    for i, setting in enumerate(settings):
+        for j, metric in enumerate(metrics):
+            print(correlation_data[metric].keys())
+            corr_values = correlation_data[metric][setting]
+            mean_corr = np.mean([corr for corr, p_val in corr_values if p_val < 0.05])
+            if not np.isnan(mean_corr):
+                heatmap_data[i, j] = mean_corr
+                mask[i, j] = False
 
-        # without title etc. for the paper:
-        fig, ax = plt.subplots(figsize=(len(metrics) * 1.5, len(settings) * 1.6))
-        heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
-                    xticklabels=metrics, yticklabels=settings, ax=ax, square=True,
-                    cbar=False, vmin=-1, vmax=1, mask=mask)
-        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=20)
-        ax.set_xticklabels(ax.get_xticklabels(), fontsize=20)
+    fig, ax = plt.subplots(figsize=(len(metrics) * 1.5, len(settings) * 1.5))
+    heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
+                            xticklabels=metrics, yticklabels=settings, ax=ax,
+                            square=True, cbar_kws={"shrink": 0.9}, vmin=-1,
+                            vmax=1, mask=mask)
+    # ax.set_xlabel('Metrics', fontsize=18)
+    # ax.set_ylabel('Preprocessing Settings', fontsize=18)
+    # ax.set_title(f'Comparison of Correlation Coefficients for CUBRIC data',
+    #                 fontsize=18)
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=18)
+    ax.set_xticklabels(ax.get_xticklabels(), fontsize=18)
+    for text in heatmap.texts:
+        text.set_size(16)
+    cbar = heatmap.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=16)
+    cbar.set_label('$\\rho$', fontsize=16, rotation=0)
+    plt.show()
 
-        for text in heatmap.texts:
-            text.set_size(18)
-        plt.subplots_adjust(left=0.11, right=0.95, top=0.9, bottom=0.1)
-        plt.show()
+    # without title etc. for the paper:
+    fig, ax = plt.subplots(figsize=(len(metrics) * 1.5, len(settings) * 1.6))
+    heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
+                xticklabels=metrics, yticklabels=settings, ax=ax, square=True,
+                cbar=False, vmin=-1, vmax=1, mask=mask)
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=20)
+    ax.set_xticklabels(ax.get_xticklabels(), fontsize=20)
+
+    for text in heatmap.texts:
+        text.set_size(18)
+    plt.subplots_adjust(left=0.11, right=0.95, top=0.9, bottom=0.1)
+    plt.show()
 
 def main():
     out_dirs = {
         # Reduction:
-        "Worst": "./Results/OpenNeuro/2024-09-27_12-35/", #baseline
-        "Mean": "./Results/OpenNeuro/2024-09-27_16-25/",
+        "Worst": "./Results/CUBRICdata/2024-10-21_22-14/", #baseline
+        "Mean": "./Results/CUBRICdata/2024-10-22_00-49/",
         # Brain mask:
-        # "Mask": "./Results/OpenNeuro/2024-09-27_12-35/",  #baseline
-        # "Multiply": "./Results/OpenNeuro/2024-09-30_09-21/",  ####
-        # "None": "./Results/OpenNeuro/2024-09-30_10-39/",  ###
-        # Normalisation
-        # "Percentile": "./Results/OpenNeuro/2024-09-27_12-35/",  # baseline
-        # "Min-Max": "./Results/OpenNeuro/2024-09-27_20-44/",
-        # "Mean-Std": "./Results/OpenNeuro/2024-09-27_22-12/",
-        # "None": "./Results/OpenNeuro/2024-09-27_23-08/",
+        "Mask": "./Results/CUBRICdata/2024-10-21_22-14/",  #baseline
+        "Multiply": "./Results/CUBRICdata/2024-10-22_03-24/",  ####
+        "No Mask": "./Results/CUBRICdata/2024-10-22_12-53/",  ###
+        # # Normalisation
+        "Percentile": "./Results/CUBRICdata/2024-10-21_22-14/",  # baseline
+        "Min-Max": "./Results/CUBRICdata/2024-10-22_19-18/",
+        "Mean-Std": "./Results/CUBRICdata/2024-10-22_21-58/",
+        "None": "./Results/CUBRICdata/2024-10-22_22-14/",
     }
 
     correlation_data = read_correlation_coefficients(out_dirs)
