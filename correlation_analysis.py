@@ -177,9 +177,8 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
 
 
 
-def main():
-    
-    scoredate = "2024-10-17_20-29"
+def main():    
+    scoredate = "2024-10-22_22-14"
     parser = argparse.ArgumentParser(
         description='Process CSV files to gather observer scores.')
     parser.add_argument(
@@ -209,9 +208,25 @@ def main():
         "ref_free": ["AES", "TG", "NGS", "GE", "IE"]
     }
     
-    plot_correlation_heatmap(spearman_corr, original_metrics_order, out_dir)
-    plot_scatter_plots(metrics, observer_scores, original_metrics_order, out_dir)
+    # plot_correlation_heatmap(spearman_corr, original_metrics_order, out_dir)
+    
+    with open(f"{out_dir}/correlation_coefficients.csv", "w",
+    newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(
+            ["Metric", "Correlation Coefficient", "P-Value"])
+        for metric in original_metrics_order["full_ref"]:
+            writer.writerow(
+                [metric, spearman_corr[metric]["corr"],
+                spearman_corr[metric]["p_val"]])
+        for metric in original_metrics_order["ref_free"]:
+            writer.writerow(
+                [metric, spearman_corr[metric]["corr"],
+                spearman_corr[metric]["p_val"]])
 
+    
+    # plot_scatter_plots(metrics, observer_scores, original_metrics_order, out_dir)
+    
 
 if __name__ == "__main__":
     main()
