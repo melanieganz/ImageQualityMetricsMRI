@@ -1,5 +1,7 @@
 import os
 import csv
+import numpy as np
+import krippendorff
 
 
 def read_txt_files(directory, sequence):
@@ -82,7 +84,28 @@ def write_merged_scores(directory, merged_scores, sequence):
             acquisition = match_acq_descr(acquisition, sequence)
             subject = subject.replace('Subject_', 'sub-')
             writer.writerow([subject, acquisition] + scores)
+            
+def calculate_krippendorffs_alpha(sequence,output_directory):
+    filename = output_directory + f"{sequence}_scores.csv"
+    
+    try:
+        with open(filename, newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            score = []
+            next(reader)
+            
+            for row in reader:
+                score.append([float(row[i]) for i in range(2, 6)])
 
+        score_array = list(map(list, zip(*score)))  
+
+        # Calculate Krippendorff's alpha
+        alpha = krippendorff.alpha(score_array)
+        return alpha
+
+    except Exception as e:
+        print(f"Error processing {filename}: {e}")
+        return None
 
 # Paths to the directories and files
 txt_directory = './observer_scores/original/'
@@ -104,3 +127,9 @@ for sequence in sequences:
     write_merged_scores(output_directory, merged_scores, sequence)
 
 print("Done")
+
+print("Calculate Krippendorff alpha between radiological scores:")
+for sequence in sequences:
+    alpha = calculate_krippendorffs_alpha(sequence,output_directory)
+    if alpha is not None:
+        print(f"Krippendorff's alpha for {sequence}: {alpha}")
