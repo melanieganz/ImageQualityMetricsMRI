@@ -82,7 +82,7 @@ for subject_folder in subject_folders:
         mask_folder = os.path.join(mask_dir,subject_folder)
 
         # For each file (reference incuded):
-        for filename in os.listdir(acq_folder):                    
+        for filename in sorted(f for f in os.listdir(acq_folder) if not f.startswith('.')):                       
             if apply_brainmask:
                 acq_bet_mask = os.path.join(mask_folder,
                                                 f"align_MPR_mask.nii.gz")
