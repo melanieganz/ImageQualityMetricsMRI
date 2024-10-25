@@ -3,3 +3,4 @@ OpenNeuro_dataset/
 calculate_metrics.py
 configs/*
 Results/CUBRICdata/
+observer_scores/
