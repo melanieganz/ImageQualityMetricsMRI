@@ -36,7 +36,7 @@ def vif(img, img_ref, reduction='mean'):
     img = torch.from_numpy(img[:, None]).float()
     img_ref = torch.from_numpy(img_ref[:, None]).float()
 
-    vif_values = piq.vif_p(img, img_ref, data_range=1., sigma_n_sq=0.4,
+    vif_values = piq.vif_p(img, img_ref, data_range=1., sigma_n_sq=2,
                            reduction='none')
 
     if reduction == 'mean':
