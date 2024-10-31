@@ -27,5 +27,5 @@ wait
 nohup python -u process_all_subjects.py --normalisation "mean_std" --mask_metric_values True --reduction "worst" --apply_brainmask True > Results/log_"$now"_norm-mean_std.txt &
 wait
 
-nohup python -u process_all_subjects.py --normalisation "none" --mask_metric_values True --reduction "worst" --apply_brainmask True > Results/log_"$now"_none.txt &
+nohup python -u process_all_subjects.py --normalisation "none" --mask_metric_values True --reduction "worst" --apply_brainmask True > Results/log_"$now"_norm-none.txt &
 wait

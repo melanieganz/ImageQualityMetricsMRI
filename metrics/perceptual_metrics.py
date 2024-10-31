@@ -32,7 +32,7 @@ def lpips(img, img_ref, reduction='mean'):
     """
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    loss_fn_vgg = LPIPS(net='vgg').to(device)
+    loss_fn_vgg = LPIPS(net='vgg', verbose=False).to(device)
 
     # change range of images to [-1, 1] and add RGB channel dimension
     img = torch.from_numpy(img[:, None]).float() * 2 - 1
