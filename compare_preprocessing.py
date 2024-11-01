@@ -152,22 +152,23 @@ def plot_comparison_heatmaps_v2(correlation_data, out_dirs):
 
     plt.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.2)  # Adjust margins
     plt.show()
+    
 
 
 def main():
     out_dirs = {
         # Reduction:
-        "Worst": "./Results/CUBRICdata/2024-10-21_22-14/", #baseline
-        "Mean": "./Results/CUBRICdata/2024-10-22_00-49/",
-        # # # Brain mask:
-        # "Mask": "./Results/CUBRICdata/2024-10-21_22-14/",  #baseline
-        # "Multiply": "./Results/CUBRICdata/2024-10-22_03-24/",  ####
-        # "No Mask": "./Results/CUBRICdata/2024-10-22_12-53/",  ###
-        # # # # Normalisation
-        # "Percentile": "./Results/CUBRICdata/2024-10-21_22-14/",  # baseline
-        # "Min-Max": "./Results/CUBRICdata/2024-10-22_19-18/",
-        # "Mean-Std": "./Results/CUBRICdata/2024-10-22_21-58/",
-        # "None": "./Results/CUBRICdata/2024-10-22_22-14/",
+        "Worst": "./Results/CUBRICdata/2024-10-28_10-44/", #baseline
+        "Mean": "./Results/CUBRICdata/2024-10-29_09-33/",
+        # # # # Brain mask:
+        "Mask": "./Results/CUBRICdata/2024-10-28_10-44/",  #baseline
+        "Multiply": "./Results/CUBRICdata/2024-10-29_12-25/",  ####
+        "No Mask": "./Results/CUBRICdata/2024-10-29_20-58/",  ###
+        # # # # # Normalisation
+        "Percentile": "./Results/CUBRICdata/2024-10-28_10-44/",  # baseline
+        "Min-Max": "./Results/CUBRICdata/2024-10-30_01-18/",
+        "Mean-Std": "./Results/CUBRICdata/2024-10-30_03-35/",
+        "None": "./Results/CUBRICdata/2024-10-30_03-51/",
     }
 
     correlation_data = read_correlation_coefficients(out_dirs)
