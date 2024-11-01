@@ -1,0 +1,4 @@
+Normalisation: percentile
+Apply brainmask: True
+Mask metric values: True
+Reduction: mean
