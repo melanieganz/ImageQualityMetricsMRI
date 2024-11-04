@@ -94,11 +94,13 @@ def load_metrics_scores(input_csv):
 
 def plot_correlation_heatmap(spearman_corr, original_metrics_order,
                              out_folder=None):
-    # setting the colormap to be grey between -0.6 and 0.6
+    # setting the colormap to be grey between -limit and limit
     coolwarm = plt.get_cmap('coolwarm')
-    red_part = coolwarm(np.linspace(0.6, 1, 128))
-    blue_part = coolwarm(np.linspace(0, 0.4, 128))
-    grey = np.full((384, 4), 0.95)
+    limit = 0.7
+    red_part = coolwarm(np.linspace(limit, 1, 128))
+    blue_part = coolwarm(np.linspace(0, 1-limit, 128))
+    length = int(128/(1-limit)*limit * 2)
+    grey = np.full((length, 4), 0.95)
     colors = np.vstack([blue_part, grey, red_part])
     cmap = mcolors.LinearSegmentedColormap.from_list('cmap', colors)
 
@@ -194,7 +196,7 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-09-27_12-35/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-10-30_18-00/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()
@@ -251,14 +253,6 @@ def main():
                     [seq, metric, spearman_corr[seq][metric]["corr"],
                      spearman_corr[seq][metric]["p_val"]])
 
-
-    for type in original_metrics_order.keys():
-        for metric in original_metrics_order[type]:
-            if all([spearman_corr[seq][metric]["p_val"] < 0.05
-                    for seq in observer_scores["full_ref"].keys()]):
-                mean_corr = np.mean([spearman_corr[seq][metric]["corr"]
-                                     for seq in observer_scores["full_ref"].keys()])
-                print(f"Mean correlation coefficient for {metric}: {mean_corr}")
 
     plot_scatter_plots(metrics, observer_scores, original_metrics_order, out_dir)
 
