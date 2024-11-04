@@ -120,6 +120,11 @@ def compute_metrics(filename, subject, output_file, brainmask_file="none",
         ref = normalize_percentile(ref_masked)
     else:
         raise ValueError("Normalisation method not recognized.")
+
+    if mask_metric_values:
+        metrics_dict["full_reference"].pop("FSIM")
+        metrics_dict["full_reference"].pop("VIF")
+        metrics_dict["full_reference"].pop("LPIPS")
     
     res = []
     for m in metrics_dict["full_reference"]:
