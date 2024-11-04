@@ -73,7 +73,9 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
                           xticklabels=metrics,
                           yticklabels=sequences,
                           ax=ax, square=True,
-                cbar_kws={"shrink": 0.8}, vmin=-1, vmax=1)
+                          cbar_kws={"shrink": 0.8}, vmin=-1, vmax=1,
+                          linewidths = 0.5, linecolor = 'lightgray'
+                          )
 
     ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=22)
     ax.set_xticklabels(ax.get_xticklabels(), fontsize=22)
@@ -92,8 +94,8 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
 
 def main():
     file_paths = {
-        "nru": "./Results/correlation_scores/openneuro_baseline.csv",
-        "cubric": "./Results/correlation_scores/cubric_baseline.csv",
+        "nru": "./Results-ISMRM25/correlation_scores/openneuro_baseline.csv",
+        "cubric": "./Results-ISMRM25/correlation_scores/cubric_baseline.csv",
     }
 
     save_dir = f"./Results/Compare_Datasets/"
