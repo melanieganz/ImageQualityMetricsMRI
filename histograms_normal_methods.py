@@ -1,24 +1,70 @@
 import matplotlib.pyplot as plt
-from sympy.printing.pretty.pretty_symbology import line_width
-
 from data_utils import *
 
 
-def plot_histograms(img1, img2, label1, label2, xlim=(0,1500), ylim=0.5e6,
-                    title=""):
+def plot_histograms(img1, img2, label1, label2, mask=None, xlim=(0,1500),
+                    ylim=0.5e6, title=""):
+
+    if mask is not None:
+        img1 = img1[mask > 0]
+        img2 = img2[mask > 0]
     bins = np.linspace(xlim[0], xlim[1], 71)
+
+    plt.figure(figsize=(8, 6))
     plt.hist(img1.flatten(), bins=bins, color="tab:blue", histtype='step',
              label=label1, linewidth=2)
-    plt.hist(img2.flatten(), bins=bins, color="tab:green", histtype='step',
+    plt.hist(img2.flatten(), bins=bins, color="tab:red", histtype='step',
                 label=label2, linewidth=2)
     plt.xlim(xlim[0], xlim[1])
     plt.ylim(0, ylim)
-    plt.legend(loc='best', fontsize=14)
-    plt.ylabel("Counts", fontsize=14)
-    plt.xlabel("Pixel intensity", fontsize=14)
-    plt.title(title, fontsize=16)
+    plt.legend(loc='best', fontsize=25)
+    plt.ylabel("Counts", fontsize=25)
+    plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
+    plt.tick_params(axis='y', which='both', labelsize=21)
+    plt.gca().yaxis.get_offset_text().set_fontsize(21)
+    plt.xlabel("Pixel intensity", fontsize=25)
+    plt.xticks(fontsize=21)
+    plt.locator_params(axis='x', nbins=6)
+    plt.grid(axis='y', color='lightgrey', linestyle='-', linewidth=0.5)
+    plt.title(title, fontsize=25)
     plt.tight_layout()
     plt.show()
+
+
+def show_example_slice(img, ref, slice_idx=50):
+    """
+    Display an example slice of the image and its reference using plt.imshow.
+
+    Parameters:
+    img (ndarray): The image data.
+    ref (ndarray): The reference data.
+    slice_idx (int, optional): The index of the slice to display. Default is 0.
+    """
+
+    # Calculate vmin and vmax
+    vmin = min(np.min(img), np.min(ref))
+    vmax = max(np.max(img), np.max(ref))
+
+    # Display the image slice
+    plt.figure(figsize=(6, 6*206/256))
+    plt.imshow(img[slice_idx, :, 50:][::-1, ::-1].T, cmap='gray', vmin=vmin, vmax=vmax)
+    # plt.title('Image')
+    plt.text(0.5, 0.96, 'Image', color='white', fontsize=40, ha='center',
+             va='top', transform=plt.gca().transAxes)
+    plt.axis('off')
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    plt.show()
+
+    # Display the reference slice
+    plt.figure(figsize=(6, 6*206/256))
+    plt.imshow(ref[slice_idx, :, 50:][::-1, ::-1].T, cmap='gray', vmin=vmin, vmax=vmax)
+    # plt.title('Reference')
+    plt.text(0.5, 0.96, 'Reference', color='white', fontsize=40, ha='center',
+             va='top', transform=plt.gca().transAxes)
+    plt.axis('off')
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    plt.show()
+
 
 
 def compare_histograms(filename, brainmask_file="none", ref_file=False):
@@ -56,69 +102,39 @@ def compare_histograms(filename, brainmask_file="none", ref_file=False):
                                                              ref_masked,
                                                              brainmask)
 
-    # no preprocessing:
-    plot_histograms(img, ref, "Image", "Reference", title="Original / not masked",
-                    ylim=0.3e6)
-
-    # brain masking:
+    ylim = 0.12e6
+    # no normalization - within brainmask:
     plot_histograms(img_masked, ref_masked, "Image",
-                    "Reference", title="No normalisation", ylim=0.3e6)
+                    "Reference", mask=brainmask, #title="None",
+                    ylim=ylim, xlim=(0, 800))
+    show_example_slice(img_masked, ref_masked, slice_idx=50)
 
     # min-max normalisation
     img_norm = min_max_scale(img_masked)
     ref_norm = min_max_scale(ref_masked)
-
     plot_histograms(img_norm, ref_norm, "Image", "Reference",
-                    title="Min-Max Normalisation", xlim=(0,1), ylim=0.3e6)
+                    mask=brainmask,
+                    # title="Min-max",
+                    xlim=(0,1), ylim=ylim)
+    show_example_slice(img_norm, ref_norm, slice_idx=50)
 
     # mean-std normalisation
     img_norm = normalize_mean_std(img_masked)
     ref_norm = normalize_mean_std(ref_masked)
-
     plot_histograms(img_norm, ref_norm, "Image", "Reference",
-                    title="Mean-Std Normalisation", xlim=(0,4), ylim=0.3e6)
+                    mask=brainmask,
+                    # title="Mean-std",
+                    xlim=(-1,4), ylim=ylim)
+    show_example_slice(img_norm, ref_norm, slice_idx=50)
 
-    # percentile normalisation no clipping
-    img_norm = normalize_percentile(img_masked, clip=False, upper_percentile=98,
-                                    lower_percentile=2)
-    ref_norm = normalize_percentile(ref_masked, clip=False, upper_percentile=98,
-                                    lower_percentile=2)
-
+    # percentile normalization
+    img_norm = normalize_percentile(img_masked)
+    ref_norm = normalize_percentile(ref_masked)
     plot_histograms(img_norm, ref_norm, "Image", "Reference",
-                    title="Percentile Normalisation", xlim=(-1,2), ylim=0.3e6)
-
-    img_norm = normalize_percentile(img_masked, clip=False, upper_percentile=99,
-                                    lower_percentile=1)
-    ref_norm = normalize_percentile(ref_masked, clip=False, upper_percentile=99,
-                                    lower_percentile=1)
-
-    plot_histograms(img_norm, ref_norm, "Image", "Reference",
-                    title="Percentile Normalisation", xlim=(-1,2), ylim=0.3e6)
-
-    img_norm = normalize_percentile(img_masked, clip=False, upper_percentile=99.9,
-                                    lower_percentile=1)
-    ref_norm = normalize_percentile(ref_masked, clip=False, upper_percentile=99.9,
-                                    lower_percentile=1)
-
-    plot_histograms(img_norm, ref_norm, "Image", "Reference",
-                    title="Percentile Normalisation", xlim=(-1,2), ylim=0.3e6)
-
-
-    img_norm = normalize_percentile(img_masked, clip=True, upper_percentile=99.9,
-                                    lower_percentile=1)
-    ref_norm = normalize_percentile(ref_masked, clip=True, upper_percentile=99.9,
-                                    lower_percentile=1)
-
-    plot_histograms(img_norm, ref_norm, "Image", "Reference",
-                    title="Percentile Normalisation", xlim=(-1,2), ylim=0.3e6)
-
-
-compare_histograms(filename='OpenNeuro_dataset/sub-01/mprage/align_sub'
-                            '-01_acq-mpragepmcoff_rec-wore_run-02_T1w.nii.gz',
-                   brainmask_file='OpenNeuro_dataset/sub-01/mprage/'
-                                  'bet_mprage_mask.nii.gz',
-                   ref_file='OpenNeuro_dataset/sub-01/mprage/'
-                            'ref_mprage_image.nii')
+                    mask=brainmask,
+                    # title="Percentile",
+                    xlim=(-0.5,1.5), ylim=ylim)
+    show_example_slice(img_norm, ref_norm, slice_idx=50)
 
 
 compare_histograms(filename='OpenNeuro_dataset/sub-01/mprage/align_sub'
