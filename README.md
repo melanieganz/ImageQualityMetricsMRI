@@ -1,8 +1,36 @@
 # ImageQualityMetricsMRI
-Repository housing implementations of image quality metrics for MRI data.
+**Assessing the Influence of Preprocessing on the Agreement of Image Quality Metrics with Radiological Evaluation in the Presence of Motion**
+
+## Abstract submitted to ISMRM 2025
+Hannah Eichhorn*, Elisa Marchetto*, Daniel Gallichan, Julia A. Schnabel, Melanie Ganz
+- _Motivation:_  Reliable image quality assessment is essential for improving motion correction methods. However, common image quality metrics (IQMs) often show inconsistent agreement with radiological evaluations and lack standardization in preprocessing techniques.
+
+- _Goal(s):_ Evaluating the correlation of ten common IQMs with radiological assessments and investigating how preprocessing steps affect these correlations.
+
+- _Approach:_ We compare the IQMs on two brain imaging datasets with real motion artifacts and analyze the effects of preprocessing choices like normalization, region-of-interest masking and slice reduction.
+
+- _Results:_ Reference-based IQMs exhibit stronger, more consistent correlations with radiological assessments than reference-free IQMs. Preprocessing steps, particularly normalization and brain masking, significantly influence the correlation.
+
+- _Impact:_ This study underscores the critical role of preprocessing choices for reliable image quality evaluation. We strongly recommend documenting all preprocessing steps in future studies. Our results further demonstrate that reference-based metrics correlate more reliably with radiological assessments than reference-free metrics.
 
 
-## Setting up the Conda environment
+#### Figures
+
+Overview of the five reference-based and five reference-free IQMs used in this study. From left to right: full name of the metric, mathematical definition, whether values increase or decrease with increasing image quality, and whether the input image is expected to be in a certain intensity range. For further details we refer the reader to each metric’s reference. 
+
+<img src="results-ismrm25/Figure-1.png" alt="Correlation of IQMs with Observer Scores" width="350"/>
+
+
+Illustration of preprocessing steps required for calculating the IQMs. The brain mask can either be neglected (“None”), used to mask the metric values (“Mask”) or multiplied to the image before calculating IQMs (“Multiply”). For normalization, we tested “None”, “Min-max”, “Mean-std” and “Percentile” normalization, using the 1st and 99.9th as lower and upper percentiles p and P. The metric value for the whole volume can be calculated by either reducing to the mean over all slices or taking the worst slice (min / max depending on IQM).
+
+<img src="results-ismrm25/Figure-2.png" alt="Preprocessing Choices" width="350"/> 
+
+#### Supplementary Figures
+![Supplementary Figures](results-ismrm25/Suppl_Figure-1.png)
+
+
+## How to use this repository
+### Setting up the Conda environment
 
 1. Clone this repository and navigate to the project directory in your terminal.
 
@@ -23,7 +51,7 @@ conda activate dev_iqm
 6. You're all set! You can now run the scripts in this project.
 
 
-## Steps to reproduce the analysis
+### Steps to reproduce the analysis
 
 1. Download and preprocess the data with:
 ```
@@ -38,9 +66,13 @@ nohup python -u process_all_subjects.py > Results/log.txt &
 ```
 One can set specific preprocessing settings for `normalisation`, 
 `mask_metric_values`, `reduction`, `apply_brainmask` as input arguments. 
-`run_process_all_subjects.sh`is a bash script to run different settings sequentially.g
+- `run_process_all_subjects.sh`is a bash script to run different settings sequentially.
 
 3. Analyse the correlation between the image quality metrics and the observer
-scores with the script `correlation_analysis.py`.
+scores with the script `analysis_scripts/correlation_analysis.py`.
 
-4. Compare correlations between different preprocessing settings with the script `compare_preprocessing.py`.
+
+4. Compare correlations between different preprocessing settings with 
+`analysis_scripts/compare_preprocessing.py` and between different datasets with 
+`analysis_scripts/compare_datasets.py`.
+
