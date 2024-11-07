@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from data_utils import *
+from utils.data_utils import *
 
 
 def plot_histograms(img1, img2, label1, label2, mask=None, xlim=(0,1500),

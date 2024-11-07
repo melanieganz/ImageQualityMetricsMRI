@@ -10,9 +10,9 @@ import shutil
 import datetime
 import subprocess
 import argparse
-from match_metrics_scores import process_csv
-from compute_metrics import compute_metrics
-from data_utils import find_reference_images
+from utils.match_metrics_scores import process_csv
+from utils.compute_metrics import compute_metrics
+from utils.data_utils import find_reference_images
 
 debug = False
 data_dir = "OpenNeuro_dataset"
@@ -116,7 +116,7 @@ for subject_folder in subject_folders:
                                               mask_metric_values=mask_metric_values,
                                               reduction=reduction)
                     else:
-                        shutil.copyfile("helper_run_calculation.sh",
+                        shutil.copyfile("utils/helper_run_calculation.sh",
                                     f"tmp_helper_run_calculation_{date_stamp}.sh")
                         command = (
                             'python -u compute_metrics.py {} {} {}'

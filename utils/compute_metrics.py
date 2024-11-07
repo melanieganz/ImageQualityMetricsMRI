@@ -2,12 +2,11 @@ import warnings
 warnings.filterwarnings("ignore")
 import os
 import argparse
-from data_utils import *
+from utils.data_utils import *
 from metrics.similarity_metrics import fsim, ssim, psnr
 from metrics.perceptual_metrics import lpips
 from metrics.information_metrics import vif, image_entropy
 from metrics.gradient_metrics import *
-from archive.CoEnt import *
 
 
 def compute_metrics(filename, subject, output_file, brainmask_file="none",

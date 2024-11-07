@@ -62,25 +62,6 @@ def plot_comparison_heatmaps(correlation_data, out_dirs, show_yticklabels=True,
                     heatmap_data[i, j] = mean_corr
                     mask[i, j] = False
 
-        # fig, ax = plt.subplots(figsize=(len(settings) * 1.5, len(metrics) * 1.5))
-        # heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,
-        #                       xticklabels=metrics, yticklabels=settings, ax=ax,
-        #                       square=True, cbar_kws={"shrink": 0.8}, vmin=-1,
-        #                       vmax=1, mask=mask)
-        # ax.set_xlabel('Metrics', fontsize=18)
-        # ax.set_ylabel('Preprocessing Settings', fontsize=18)
-        # ax.set_title(f'Comparison of Correlation Coefficients for {sequence}',
-        #              fontsize=18)
-        # ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=18)
-        # ax.set_xticklabels(ax.get_xticklabels(), fontsize=18)
-        # for text in heatmap.texts:
-        #     text.set_size(16)
-        # cbar = heatmap.collections[0].colorbar
-        # cbar.ax.tick_params(labelsize=16)
-        # cbar.set_label('$\\rho$', fontsize=16, rotation=0)
-        # plt.show()
-
-        # without title etc. for the paper:
         fig, ax = plt.subplots(figsize=(len(settings) * 2, len(metrics) * 1.2))
         ytick = metrics if show_yticklabels else False
         heatmap = sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap=cmap,

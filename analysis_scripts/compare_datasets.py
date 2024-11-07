@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.colors as mcolors
-from seaborn import heatmap
 
 
 def read_correlation_coefficients(file_paths):

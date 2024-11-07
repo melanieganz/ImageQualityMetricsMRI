@@ -1,9 +1,8 @@
 import numpy as np
 from scipy.ndimage import sobel
-from scipy.stats import entropy
 from skimage.feature import canny
 from scipy.ndimage import convolve
-from data_utils import crop_img, bin_img
+from utils.data_utils import crop_img, bin_img
 
 
 def calc_gradient_magnitude(img, mode="2d"):
