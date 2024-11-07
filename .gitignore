@@ -4,3 +4,4 @@ calculate_metrics.py
 configs/*
 tmp_background_ratio.py
 archive/
+Results-ISMRM25/CUBRICdata/

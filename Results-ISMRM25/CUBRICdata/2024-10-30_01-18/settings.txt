@@ -1,4 +1,0 @@
-Normalisation: min_max
-Apply brainmask: True
-Mask metric values: True
-Reduction: worst

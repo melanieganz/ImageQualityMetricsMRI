@@ -1,4 +1,0 @@
-Normalisation: mean_std
-Apply brainmask: True
-Mask metric values: True
-Reduction: worst

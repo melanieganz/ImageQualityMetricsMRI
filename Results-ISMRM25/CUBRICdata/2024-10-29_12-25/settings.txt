@@ -1,4 +1,0 @@
-Normalisation: percentile
-Apply brainmask: True
-Mask metric values: False
-Reduction: worst
