@@ -9,7 +9,7 @@ Repository housing implementations of image quality metrics for MRI data.
 3. Create the Conda environment from the `environment.yaml` file:
 
 ```bash
-conda env create -f environment.yaml
+conda env create -f environment.yml
 ```
 
 4. Activate the Conda environment:
