@@ -1,4 +1,4 @@
-name: dev_iqm_test
+name: dev_iqm
 channels:
   - defaults
   - conda-forge
