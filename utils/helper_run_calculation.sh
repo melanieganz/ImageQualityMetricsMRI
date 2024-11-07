@@ -19,5 +19,8 @@ conda activate dev_iqm
 # change directory
 cd $code_directory
 
+# Set PYTHONPATH to include the code directory
+export PYTHONPATH=$code_directory:$PYTHONPATH
+
 
 

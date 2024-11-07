@@ -116,10 +116,10 @@ for subject_folder in subject_folders:
                                               mask_metric_values=mask_metric_values,
                                               reduction=reduction)
                     else:
-                        shutil.copyfile("utils/helper_run_calculation.sh",
-                                    f"tmp_helper_run_calculation_{date_stamp}.sh")
+                        shutil.copyfile("./utils/helper_run_calculation.sh",
+                                    f"./utils/tmp_helper_run_calculation_{date_stamp}.sh")
                         command = (
-                            'python -u compute_metrics.py {} {} {}'
+                            'python -u utils/compute_metrics.py {} {} {}'
                             '/ImageQualityMetrics.csv {} {} --normal {} '
                             '--mask_metric_values {} --reduction {}'
                         ).format(
@@ -132,14 +132,14 @@ for subject_folder in subject_folders:
                             mask_metric_values,
                             reduction
                         )
-                        with open(f"tmp_helper_run_calculation_{date_stamp}.sh",
+                        with open(f"./utils/tmp_helper_run_calculation_{date_stamp}.sh",
                                   "a") as file:
                             file.write("\n" + command + "\n")
 
-                        subprocess.run(f"bash tmp_helper_run_"
+                        subprocess.run(f"bash ./utils/tmp_helper_run_"
                                        f"calculation_{date_stamp}.sh",
                                        shell=True)
-                        os.remove(f"tmp_helper_run_calculation_{date_stamp}.sh")
+                        os.remove(f"./utils/tmp_helper_run_calculation_{date_stamp}.sh")
 
     print(f"Process completed for {subject_folder}")
 
