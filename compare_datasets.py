@@ -94,8 +94,8 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
 
 def main():
     file_paths = {
-        "nru": "./Results-ISMRM25/correlation_scores/openneuro_baseline.csv",
-        "cubric": "./Results-ISMRM25/correlation_scores/cubric_baseline.csv",
+        "nru": "./results-ismrm25/correlation_scores/openneuro_baseline.csv",
+        "cubric": "./results-ismrm25/correlation_scores/cubric_baseline.csv",
     }
 
     save_dir = f"./Results/Compare_Datasets/"
