@@ -97,23 +97,23 @@ def plot_comparison_heatmaps(correlation_data, out_dirs, show_yticklabels=True,
 
 def main():
     preproc_settings = {
-        "reduction":{"Worst": "./results-ismrm25/correlation_scores/"
+        "reduction":{"Worst": "./results-mrm/correlation_scores/"
                               "openneuro_mask_mask.csv",
-                     "Mean": "./results-ismrm25/correlation_scores/"
+                     "Mean": "./results-mrm/correlation_scores/"
                              "openneuro_reduction_mean.csv"},
-        "brain_mask": {"Mask": "./results-ismrm25/correlation_scores/"
+        "brain_mask": {"Mask": "./results-mrm/correlation_scores/"
                                "openneuro_mask_mask.csv",
-                       "Multiply": "./Rresults-ismrm25/correlation_scores/"
+                       "Multiply": "./Rresults-mrm/correlation_scores/"
                                    "openneuro_baseline.csv",
-                       "No Mask": "./results-ismrm25/correlation_scores/"
+                       "No Mask": "./results-mrm/correlation_scores/"
                                   "openneuro_mask_none.csv"},
-        "normalisation": {"Percentile": "./results-ismrm25/correlation_scores/"
+        "normalisation": {"Percentile": "./results-mrm/correlation_scores/"
                                         "openneuro_mask_mask.csv",
-                          "Min-Max": "./results-ismrm25/correlation_scores/"
+                          "Min-Max": "./results-mrm/correlation_scores/"
                                      "openneuro_norm_minmax.csv",
-                          "Mean-Std": "./results-ismrm25/correlation_scores/"
+                          "Mean-Std": "./results-mrm/correlation_scores/"
                                       "openneuro_norm_meanstd.csv",
-                          "None": "./results-ismrm25/correlation_scores/"
+                          "None": "./results-mrm/correlation_scores/"
                                   "openneuro_norm_none.csv"}
     }
     for settings, out_dirs in preproc_settings.items():

@@ -2,6 +2,7 @@ import os
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 import matplotlib.colors as mcolors
 
@@ -90,10 +91,39 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
         plt.savefig(f"{save_dir}Heatmap.png")
     plt.show()
 
+    # rank each column of the heatmap data:
+    rank_data = np.copy(abs(heatmap_data).round(2))
+    rank_data[np.isnan(rank_data)] = 0
+    ranks = []
+    for i in range(rank_data.shape[0]):
+        ranks.append(pd.Series(rank_data[i]).rank(ascending=True,
+                                           method="max").tolist())
+    average_ranks = np.mean(np.array(ranks), axis=0)
+
+    # plot the average ranks:
+    fig, ax = plt.subplots(figsize=(fig_width, 4))
+    bars = ax.bar(metrics, average_ranks, color="tab:blue")
+    ax.set_ylabel("Average Rank", fontsize=22)
+    ax.set_xlabel("Metric", fontsize=22)
+    ax.set_axisbelow(True)
+    ax.minorticks_on()
+    ax.set_yticks(np.arange(0, 11, 1), minor=True)
+    ax.tick_params(axis='both', which='major', labelsize=22)
+    ax.yaxis.grid(True, which='minor', color='lightgray', linestyle='--')
+    ax.yaxis.grid(True, which='major', color='lightgray', linestyle='--')
+    plt.subplots_adjust(left=0.11, right=0.99, top=0.8, bottom=0.2)
+    for bar in bars:
+        height = bar.get_height()  # Get the height of each bar
+        ax.text(bar.get_x() + bar.get_width() / 2, height-1.6, f'{height:.2f}',
+                ha='center', va='bottom', fontsize=20, color='white')
+    if save_dir is not None:
+        plt.savefig(f"{save_dir}Average_ranks.png")
+    plt.show()
+
 
 def main():
     file_paths = {
-        "nru": "./results-ismrm25/correlation_scores/openneuro_baseline.csv",
+        "nru": "./results-mrm/correlation_scores/openneuro_baseline.csv",
         "cubric": "./results-ismrm25/correlation_scores/cubric_baseline.csv",
     }
 
