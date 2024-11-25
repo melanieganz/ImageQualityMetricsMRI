@@ -117,7 +117,7 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
         ax.text(bar.get_x() + bar.get_width() / 2, height-1.6, f'{height:.0f}',
                 ha='center', va='bottom', fontsize=20, color='white')
     if save_dir is not None:
-        plt.savefig(f"{save_dir}Average_ranks.png")
+        plt.savefig(f"{save_dir}Median_ranks.png")
     plt.show()
 
 
