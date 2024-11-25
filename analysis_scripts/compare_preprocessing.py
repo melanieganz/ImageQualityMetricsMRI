@@ -132,23 +132,23 @@ def main():
     print("Done!")
 
     preproc_settings = {
-        "reduction":{"Worst": "./results-ismrm25/correlation_scores/"
+        "reduction":{"Worst": "./results-mrm/correlation_scores/"
                               "cubric_baseline.csv",
-                     "Mean": "./results-ismrm25/correlation_scores/"
+                     "Mean": "./results-mrm/correlation_scores/"
                              "cubric_reduction_mean.csv"},
-        "brain_mask": {"Mask": "./results-ismrm25/correlation_scores/"
+        "brain_mask": {"Mask": "./results-mrm/correlation_scores/"
                                "cubric_mask_mask.csv",
-                       "Multiply": "./results-ismrm25/correlation_scores/"
+                       "Multiply": "./results-mrm/correlation_scores/"
                                    "cubric_baseline.csv",
-                       "No Mask": "./results-ismrm25/correlation_scores/"
+                       "No Mask": "./results-mrm/correlation_scores/"
                                   "cubric_mask_none.csv"},
-        "normalisation": {"Percentile": "./results-ismrm25/correlation_scores/"
+        "normalisation": {"Percentile": "./results-mrm/correlation_scores/"
                                         "cubric_baseline.csv",
-                          "Min-Max": "./results-ismrm25/correlation_scores/"
+                          "Min-Max": "./results-mrm/correlation_scores/"
                                      "cubric_norm_minmax.csv",
-                          "Mean-Std": "./results-ismrm25/correlation_scores/"
+                          "Mean-Std": "./results-mrm/correlation_scores/"
                                       "cubric_norm_meanstd.csv",
-                          "None": "./results-ismrm25/correlation_scores/"
+                          "None": "./results-mrm/correlation_scores/"
                                   "cubric_norm_none.csv"}
     }
     for settings, out_dirs in preproc_settings.items():
