@@ -150,10 +150,10 @@ def plot_correlation_heatmap(spearman_corr, original_metrics_order,
 
 
 def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
-                       out_folder=None):
+                       correlation_results, out_folder=None):
     types = list(metrics.keys())
     for sequence in metrics[types[0]].keys():
-        fig, axes = plt.subplots(nrows=2, ncols=5, figsize=(25, 10))
+        fig, axes = plt.subplots(nrows=2, ncols=5, figsize=(25, 10), sharey=True)
 
         i = 0
         for type in types:
@@ -165,14 +165,26 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
                 if not any(element is None for element in x):
                     y = observer_scores[type][sequence]["Combined"]
                     ax.scatter(x, y, alpha=0.7)
-                    ax.set_xlabel(f'{metric}', fontsize=20)
-                    ax.set_ylabel('Observer Scores', fontsize=20)
+                    ax.set_xlabel(f'{metric}', fontsize=32)
+                    if col == 0:
+                        ax.set_ylabel('Observer Scores', fontsize=32)
+                    ax.set_ylim(0.5, 5.5)
+                    ax.tick_params(axis='both', which='major', labelsize=25)
                     ax.grid(True)
+                    if row ==1 and col == 0:
+                        # remove the rightmost tick label:
+                        ax.set_xticks(ax.get_xticks()[:-1])
 
                     # Calculate and plot regression line
                     if len(x) > 1 and len(y) > 1:
                         slope, intercept = np.polyfit(x, y, 1)
-                        ax.plot(x, slope * np.array(x) + intercept, color='tab:green')
+                        ax.plot(x, slope * np.array(x) + intercept, color='tab:green', lw=4)
+
+                    p_val = correlation_results[sequence][metric]["p_val"]
+                    corr_val = correlation_results[sequence][metric]["corr"]
+                    if p_val < 0.05:
+                        ax.text(0.3, -0.09, f'$\\rho$ = {corr_val:.2f}\n',
+                                transform=ax.transAxes, fontsize=25, fontweight='bold')
                 i += 1
 
         # Hide any unused subplots
@@ -181,8 +193,6 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
             col = j % 5
             fig.delaxes(axes[row, col])
 
-        # plt.suptitle(f'Scatter Plots of Metrics vs. Observer Scores '
-        #              f'for {sequence}', fontsize=18)
         plt.tight_layout()
         if out_folder is not None:
             plt.savefig(f'{out_folder}/scatter_plots_{sequence}.png', dpi=200)
@@ -196,7 +206,7 @@ def main():
         '--input_csv',
         help='Path to the CSV file containing the metrics and observer scores',
         default="/home/iml/hannah.eichhorn/Results/ImageQualityMetrics/"
-                "OpenNeuro/2024-11-20_21-01/ImageQualityMetricsScores.csv"
+                "OpenNeuro/2024-11-20_13-26/ImageQualityMetricsScores.csv"
     )
 
     args = parser.parse_args()
@@ -254,7 +264,8 @@ def main():
                      spearman_corr[seq][metric]["p_val"]])
 
 
-    plot_scatter_plots(metrics, observer_scores, original_metrics_order, out_dir)
+    plot_scatter_plots(metrics, observer_scores, original_metrics_order,
+                       spearman_corr, out_dir)
 
 
 if __name__ == "__main__":

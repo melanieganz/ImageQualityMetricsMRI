@@ -98,12 +98,12 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
     for i in range(rank_data.shape[0]):
         ranks.append(pd.Series(rank_data[i]).rank(ascending=True,
                                            method="max").tolist())
-    average_ranks = np.mean(np.array(ranks), axis=0)
+    average_ranks = np.median(np.array(ranks), axis=0)
 
     # plot the average ranks:
     fig, ax = plt.subplots(figsize=(fig_width, 4))
     bars = ax.bar(metrics, average_ranks, color="tab:blue")
-    ax.set_ylabel("Average Rank", fontsize=22)
+    ax.set_ylabel("Median Rank", fontsize=22)
     ax.set_xlabel("Metric", fontsize=22)
     ax.set_axisbelow(True)
     ax.minorticks_on()
@@ -111,10 +111,10 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
     ax.tick_params(axis='both', which='major', labelsize=22)
     ax.yaxis.grid(True, which='minor', color='lightgray', linestyle='--')
     ax.yaxis.grid(True, which='major', color='lightgray', linestyle='--')
-    plt.subplots_adjust(left=0.11, right=0.99, top=0.8, bottom=0.2)
+    plt.subplots_adjust(left=0.07, right=0.99, top=0.8, bottom=0.2)
     for bar in bars:
         height = bar.get_height()  # Get the height of each bar
-        ax.text(bar.get_x() + bar.get_width() / 2, height-1.6, f'{height:.2f}',
+        ax.text(bar.get_x() + bar.get_width() / 2, height-1.6, f'{height:.0f}',
                 ha='center', va='bottom', fontsize=20, color='white')
     if save_dir is not None:
         plt.savefig(f"{save_dir}Average_ranks.png")
