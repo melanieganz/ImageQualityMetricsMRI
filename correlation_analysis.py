@@ -178,7 +178,7 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
 
 
 def main():    
-    scoredate = "2024-10-30_03-51"
+    scoredate = "2024-11-24_01-50"
     parser = argparse.ArgumentParser(
         description='Process CSV files to gather observer scores.')
     parser.add_argument(
@@ -210,7 +210,7 @@ def main():
     
     plot_correlation_heatmap(spearman_corr, original_metrics_order, out_dir)
     
-    with open(f"{out_dir}/correlation_coefficients.csv", "w",
+    with open(f"{out_dir}/cubric_norm_none.csv", "w",
     newline='') as file:
         writer = csv.writer(file)
         writer.writerow(

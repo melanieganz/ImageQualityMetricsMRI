@@ -76,11 +76,6 @@ def plot_comparison_heatmaps(correlation_data, out_dirs):
         text.set_size(18)
     plt.subplots_adjust(left=0.11, right=0.95, top=0.9, bottom=0.1)
     plt.show()
-    
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import matplotlib.colors as mcolors
 
 def plot_comparison_heatmaps_v2(correlation_data, out_dirs):
     # Setting the colormap to be grey between -0.6 and 0.6
