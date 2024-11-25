@@ -1,6 +1,5 @@
 # ImageQualityMetricsMRI
-Repository housing implementations of image quality metrics for MRI data.
-
+Repository housing implementations of image quality metrics for MRI (CUBRIC) data.
 
 ## Setting up the Conda environment
 
