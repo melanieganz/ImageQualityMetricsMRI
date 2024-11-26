@@ -183,8 +183,12 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
                     p_val = correlation_results[sequence][metric]["p_val"]
                     corr_val = correlation_results[sequence][metric]["corr"]
                     if p_val < 0.05:
-                        ax.text(0.3, -0.09, f'$\\rho$ = {corr_val:.2f}\n',
-                                transform=ax.transAxes, fontsize=25, fontweight='bold')
+                        if metric in ["LPIPS", "GE", "IE"]:
+                            ax.text(0.52, 0.8, f'$\\rho$ = {corr_val:.2f}\n',
+                                    transform=ax.transAxes, fontsize=25, fontweight='bold')
+                        else:
+                            ax.text(0.09, 0.8, f'$\\rho$ = {corr_val:.2f}\n',
+                                    transform=ax.transAxes, fontsize=25, fontweight='bold')
                 i += 1
 
         # Hide any unused subplots
