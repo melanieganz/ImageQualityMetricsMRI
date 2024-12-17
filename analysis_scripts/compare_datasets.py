@@ -89,6 +89,7 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
     if save_dir is not None:
         os.makedirs(os.path.dirname(save_dir), exist_ok=True)
         plt.savefig(f"{save_dir}Heatmap.png")
+        plt.savefig(f"{save_dir}Heatmap.pdf")
     plt.show()
 
     # rank each column of the heatmap data:
@@ -118,6 +119,7 @@ def plot_comparison_heatmaps(correlation_data, save_dir=None):
                 ha='center', va='bottom', fontsize=20, color='white')
     if save_dir is not None:
         plt.savefig(f"{save_dir}Median_ranks.png")
+        plt.savefig(f"{save_dir}Median_ranks.pdf")
     plt.show()
 
 

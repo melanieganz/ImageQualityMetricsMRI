@@ -82,6 +82,7 @@ def plot_comparison_heatmaps(correlation_data, out_dirs, show_yticklabels=True,
         if save_dir is not None:
             os.makedirs(os.path.dirname(save_dir), exist_ok=True)
             plt.savefig(f"{save_dir}_{sequence}.png")
+            plt.savefig(f"{save_dir}_{sequence}.svg")
         plt.show()
 
         # # create colorbar

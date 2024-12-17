@@ -146,6 +146,8 @@ def plot_correlation_heatmap(spearman_corr, original_metrics_order,
     plt.tight_layout()
     if out_folder is not None:
         plt.savefig(f'{out_folder}/correlation_heatmap.png', dpi=200)
+        plt.savefig(f'{out_folder}/correlation_heatmap.pdf')
+        plt.savefig(f'{out_folder}/correlation_heatmap.svg')
     plt.show()
 
 
@@ -200,6 +202,8 @@ def plot_scatter_plots(metrics, observer_scores, original_metrics_order,
         plt.tight_layout()
         if out_folder is not None:
             plt.savefig(f'{out_folder}/scatter_plots_{sequence}.png', dpi=200)
+            plt.savefig(f'{out_folder}/scatter_plots_{sequence}.pdf')
+            plt.savefig(f'{out_folder}/scatter_plots_{sequence}.svg')
         plt.show()
 
 
