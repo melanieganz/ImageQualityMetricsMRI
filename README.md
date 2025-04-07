@@ -1,6 +1,14 @@
 # ImageQualityMetricsMRI
 **Assessing the Influence of Preprocessing on the Agreement of Image Quality Metrics with Radiological Evaluation in the Presence of Motion**
 
+Currently under review | Preprint available [here](https://arxiv.org/abs/2412.18389).
+
+## Educational talk "Motion in MRI - Challenges, Strategies & Quality Evaluation"
+We were invited to present our work on image quality evaluation at the MR Educational Series of the
+British and Irish Chapter of the ISMRM on April 4th, 2025. You can find the corresponding slides `Motion_in_MRI.pdf` 
+in this repository. The recording will be available on the [British and Irish Chapter's website](https://www.ismrm.org/chapters/british-chapter/mr-edu-series/).
+
+
 ## Abstract submitted to ISMRM 2025
 Hannah Eichhorn*, Elisa Marchetto*, Daniel Gallichan, Julia A. Schnabel, Melanie Ganz
 - _Motivation:_  Reliable image quality assessment is essential for improving motion correction methods. However, common image quality metrics (IQMs) often show inconsistent agreement with radiological evaluations and lack standardization in preprocessing techniques.
