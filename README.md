@@ -6,7 +6,7 @@ Currently under review | Preprint available [here](https://arxiv.org/abs/2412.18
 ## Educational talk "Motion in MRI - Challenges, Strategies & Quality Evaluation"
 We were invited to present our work on image quality evaluation at the MR Educational Series of the
 British and Irish Chapter of the ISMRM on April 4th, 2025. You can find the corresponding slides `Motion_in_MRI.pdf` 
-in this repository. The recording will be available on the [British and Irish Chapter's website](https://www.ismrm.org/chapters/british-chapter/mr-edu-series/).
+in this repository. The recording is available on the [British and Irish Chapter's website](https://www.ismrm.org/british/2025-bic-edu-winter.htm).
 
 
 ## Abstract submitted to ISMRM 2025
