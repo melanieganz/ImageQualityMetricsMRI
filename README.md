@@ -9,8 +9,11 @@ British and Irish Chapter of the ISMRM on April 4th, 2025. You can find the corr
 in this repository. The recording is available on the [British and Irish Chapter's website](https://www.ismrm.org/british/2025-bic-edu-winter.htm).
 
 
-## Abstract submitted to ISMRM 2025
+## Abstract accepted at ISMRM 2025 (#0336, Magna Cum Laude Merit Award)
 Hannah Eichhorn*, Elisa Marchetto*, Daniel Gallichan, Julia A. Schnabel, Melanie Ganz
+
+**Digital Poster Video available in the main folder (file name: digital_poster_ismrm25.mp4).**
+
 - _Motivation:_  Reliable image quality assessment is essential for improving motion correction methods. However, common image quality metrics (IQMs) often show inconsistent agreement with radiological evaluations and lack standardization in preprocessing techniques.
 
 - _Goal(s):_ Evaluating the correlation of ten common IQMs with radiological assessments and investigating how preprocessing steps affect these correlations.
