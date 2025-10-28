@@ -1,7 +1,10 @@
 # ImageQualityMetricsMRI
 **Assessing the Influence of Preprocessing on the Agreement of Image Quality Metrics with Radiological Evaluation in the Presence of Motion**
 
-Currently under review | Preprint available [here](https://arxiv.org/abs/2412.18389).
+Published in MAGMA:
+Marchetto, E., Eichhorn, H., Gallichan, D. et al. Agreement of image quality metrics with radiological evaluation in the presence of motion artifacts. Magn Reson Mater Phy (2025). https://doi.org/10.1007/s10334-025-01266-y
+Available [here](https://link.springer.com/article/10.1007/s10334-025-01266-y).
+Preprint available [here](https://arxiv.org/abs/2412.18389).
 
 ## Educational talk "Motion in MRI - Challenges, Strategies & Quality Evaluation"
 We were invited to present our work on image quality evaluation at the MR Educational Series of the
